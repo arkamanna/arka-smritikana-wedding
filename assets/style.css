@@ -345,7 +345,9 @@ body.en .ec-map a{ font-family:var(--serif-en); font-weight:600; }
 .letter-body b{ color:var(--maroon); }
 .letter-sign{ margin-top:30px; font-family:var(--bng); color:var(--maroon); line-height:1.9;
   text-align:right; }
-.letter-sign .from{ color:var(--ink-soft); margin-bottom:6px; font-weight:600; }
+.letter-sign .from{ color:var(--ink-soft); margin-bottom:8px; font-weight:600; }
+.letter-sign .side{ color:var(--gold-deep); font-weight:600; }
+.letter-sign p{ line-height:1.9; }
 body.en .letter-sign{ font-family:var(--serif-en); }
 
 /* ============ ENGLISH ARCH ============ */
@@ -355,7 +357,7 @@ body.en .letter-sign{ font-family:var(--serif-en); }
   color:var(--ink);
   border:2px solid var(--gold);
   border-radius:180px 180px 20px 20px;
-  padding:70px 34px 150px; box-shadow:var(--shadow); overflow:hidden; }
+  padding:70px 34px 170px; box-shadow:var(--shadow); overflow:hidden; }
 .arch-inner{ position:relative; z-index:2; }
 .lotus-top{ width:70px; height:44px; margin:0 auto 18px;
   background:linear-gradient(var(--maroon-soft), var(--maroon));
@@ -408,6 +410,15 @@ body.en .blessing{ font-style:italic; }
 .arch-date{ font-family:var(--serif-en); font-weight:600; color:var(--maroon); font-size:clamp(1.05rem,4vw,1.3rem); margin-top:6px; }
 .arch-venue{ font-family:var(--serif-en); color:var(--ink-soft); font-size:1rem; line-height:1.55; margin-top:14px; }
 .arch-venue b{ color:var(--maroon); }
+.arch-invite b{ display:block; color:var(--maroon); font-weight:600; }
+.arch-join{ display:block; font-family:var(--script); color:var(--gold-deep); font-size:1.25rem; margin:6px 0; }
+.arch-req{ display:block; font-family:var(--serif-en); color:var(--ink); font-size:clamp(1rem,3.8vw,1.18rem); line-height:1.5; margin-top:12px; }
+.arch-events{ margin-top:22px; display:flex; flex-direction:column; gap:14px; }
+.ae-row{ display:flex; flex-direction:column; gap:2px; padding:10px 8px; border-radius:12px;
+  background:rgba(90,10,26,.05); border:1px solid rgba(184,137,60,.3); }
+.ae-tag{ font-family:var(--cinzel); letter-spacing:3px; text-transform:uppercase; font-size:.72rem; color:var(--gold-deep); }
+.ae-when{ font-family:var(--serif-en); font-weight:600; color:var(--maroon); font-size:clamp(1rem,3.6vw,1.12rem); }
+.ae-where{ font-family:var(--serif-en); color:var(--ink-soft); font-size:.95rem; }
 
 /* ============ LANGUAGE SWITCH PILL ============ */
 .lang-switch{ position:fixed; left:22px; bottom:22px; z-index:60;
