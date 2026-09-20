@@ -34,6 +34,7 @@
 </div>
 
 <div id="petals" class="petals" aria-hidden="true"></div>
+<div id="diyas" class="diyas" aria-hidden="true"></div>
 
 <a class="lang-switch" href="bengali.html">বাংলা ⇄</a>
 <button id="musicBtn" class="music-btn" title="Ambient music" aria-label="Toggle music"><span class="note">♪</span></button>
@@ -87,7 +88,7 @@
     <h3 class="banner reveal en-cinzel">The Couple</h3>
 
     <div class="couple">
-      <article class="person-card reveal">
+      <article class="person-card reveal reveal-left">
         <div class="mandala" aria-hidden="true"></div>
         <p class="role">The Groom</p>
         <h4 class="pname en-serif">Arka Manna</h4>
@@ -101,7 +102,7 @@
 
       <div class="union-mark reveal" aria-hidden="true"><span class="knot"></span></div>
 
-      <article class="person-card reveal">
+      <article class="person-card reveal reveal-right">
         <div class="mandala" aria-hidden="true"></div>
         <p class="role">The Bride</p>
         <h4 class="pname en-serif">Smritikana Paik</h4>
@@ -122,35 +123,38 @@
 
     <h3 class="banner reveal en-cinzel">The Celebrations</h3>
 
-    <div class="event-grid">
-      <div class="event-card reveal">
+    <div class="event-grid two">
+      <div class="event-card reveal reveal-left">
         <div class="ec-icon">💍</div>
         <p class="ec-title en-serif">Wedding Ceremony</p>
         <p class="ec-line-strong">Sunday, 13th December 2026</p>
         <p class="ec-sub">Gaye Holud &amp; Shubho Bibaho</p>
+        <div class="ec-venue">
+          <span class="ec-venue-tag">Wedding Venue</span>
+          <p class="ec-line-strong">Atithi Inn</p>
+          <p class="ec-line">Raghunathpur Road, Baguiati,<br/>Kolkata – 700059</p>
+        </div>
+        <p class="ec-map"><a href="https://www.google.com/maps/place/Atithi+Inn/data=!4m2!3m1!1s0x0:0xb43edb5f57dc1e29" target="_blank" rel="noopener">📍 View on Map</a></p>
       </div>
 
-      <div class="event-card reveal">
+      <div class="event-card reveal reveal-right">
         <div class="ec-icon">🎉</div>
         <p class="ec-title en-serif">Reception</p>
         <p class="ec-line-strong">Tuesday, 15th December 2026</p>
         <p class="ec-sub">7:00 PM Onwards</p>
-      </div>
-
-      <div class="event-card reveal">
-        <div class="ec-icon">📍</div>
-        <p class="ec-title en-serif">Venue</p>
-        <p class="ec-line-strong">“Imperial Banquet”</p>
-        <p class="ec-line">Mohan Mall, 4th Floor</p>
-        <p class="ec-line">22, Sahid Surya Sen Road,<br/>Berhampore, Murshidabad – 742101</p>
-        <p class="ec-sub"><a href="https://www.google.com/maps/search/Mohan+Mall+Berhampore+Murshidabad" target="_blank" rel="noopener">View on Map →</a></p>
+        <div class="ec-venue">
+          <span class="ec-venue-tag">Reception Venue</span>
+          <p class="ec-line-strong">“Imperial Banquet”, Mohan Mall</p>
+          <p class="ec-line">(4th Floor) 22, Sahid Surya Sen Road,<br/>Berhampore, Murshidabad – 742101</p>
+        </div>
+        <p class="ec-map"><a href="https://www.google.com/maps/search/Imperial+Banquet+Mohan+Mall+Berhampore+Murshidabad" target="_blank" rel="noopener">📍 View on Map</a></p>
       </div>
     </div>
   </section>
 
   <!-- ============ FORMAL INVITATION (ARCH) ============ -->
   <section class="section arch-sec" id="invite">
-    <div class="arch reveal">
+    <div class="arch reveal reveal-zoom">
       <div class="arch-flowers left" aria-hidden="true"></div>
       <div class="arch-flowers right" aria-hidden="true"></div>
       <div class="arch-inner">
@@ -170,6 +174,10 @@
         </p>
         <p class="arch-on">ON</p>
         <p class="arch-date">15th December 2026, Tuesday Evening, 7:00 PM Onwards</p>
+        <p class="arch-venue">
+          <b>Venue:</b> “Imperial Banquet”, Mohan Mall (4th Floor)<br/>
+          22, Sahid Surya Sen Road, Berhampore, Murshidabad – 742101
+        </p>
       </div>
       <div class="elephants" aria-hidden="true">
         <span class="ele left">🐘</span>
@@ -198,7 +206,17 @@
 
   <footer class="footer">
     <p class="foot-names en-serif">Arka &nbsp;❤&nbsp; Smritikana</p>
-    <p class="foot-sub">13 · 12 · 2026</p>
+    <div class="foot-dates">
+      <span class="foot-event">
+        <span class="fe-label">Wedding</span>
+        <span class="fe-date">Sunday, 13 December 2026</span>
+      </span>
+      <span class="foot-sep">✦</span>
+      <span class="foot-event">
+        <span class="fe-label">Reception</span>
+        <span class="fe-date">Tuesday, 15 December 2026</span>
+      </span>
+    </div>
     <p class="foot-credit"><a href="bengali.html">বাংলায় পড়ুন →</a></p>
   </footer>
 

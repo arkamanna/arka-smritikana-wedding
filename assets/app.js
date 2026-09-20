@@ -83,6 +83,25 @@
     setInterval(makePetal, 1400);
   }
 
+  /* ---------- Floating diyas (rising lamps) ---------- */
+  const diyasLayer = document.getElementById("diyas");
+  function makeDiya() {
+    if (!diyasLayer) return;
+    const d = document.createElement("span");
+    d.className = "diya";
+    d.textContent = "🪔";
+    d.style.left = Math.random() * 96 + "vw";
+    d.style.fontSize = 18 + Math.random() * 14 + "px";
+    const dur = 12 + Math.random() * 8;
+    d.style.animationDuration = dur + "s";
+    diyasLayer.appendChild(d);
+    setTimeout(() => d.remove(), dur * 1000 + 500);
+  }
+  if (diyasLayer && !reduced) {
+    for (let i = 0; i < 3; i++) setTimeout(makeDiya, 2000 + i * 2500);
+    setInterval(makeDiya, 5200);
+  }
+
   /* ---------- Scroll reveal ---------- */
   const io = new IntersectionObserver(
     (entries) => {
@@ -129,55 +148,152 @@
     setInterval(tick, 1000);
   }
 
-  /* ---------- Music (WebAudio ambient tanpura-like drone) ---------- */
+  /* ---------- Music: subtle shehnai melody over a soft tanpura drone ---------- */
   const musicBtn = document.getElementById("musicBtn");
   let audioCtx = null;
+  let master = null;      // overall gain (fade in/out)
+  let leadGain = null;    // shehnai
+  let droneGain = null;   // tanpura
   let playing = false;
-  let masterGain = null;
+  let built = false;
+  let schedTimer = null;
 
-  function buildAmbient() {
+  // Raga Bhairavi-flavoured scale (Sa = C#4)
+  const Sa = 277.18;
+  const scale = {
+    Sa: 277.18, Re: 293.66, Ga: 329.63, Ma: 369.99,
+    Pa: 415.30, Dha: 440.0, Ni: 493.88, SA: 554.37, RE: 587.33,
+  };
+  // gentle, slow phrase: [note, beats]  (REST = silence)
+  const phrase = [
+    ["Sa", 1], ["Re", 1], ["Ga", 2], ["Ma", 1], ["Pa", 2],
+    ["Ma", 1], ["Ga", 1], ["Re", 2], ["Sa", 2], ["REST", 1],
+    ["Pa", 1], ["Dha", 1], ["Pa", 1], ["Ma", 2], ["Ga", 1],
+    ["Re", 1], ["Sa", 3], ["REST", 2],
+    ["Ga", 1], ["Ma", 1], ["Pa", 1], ["Dha", 2], ["Pa", 1],
+    ["Ma", 1], ["Ga", 2], ["Re", 1], ["Sa", 3], ["REST", 2],
+  ];
+  const beat = 0.6; // seconds per beat (slow, soothing)
+
+  function buildAudio() {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const master = audioCtx.createGain();
+    master = audioCtx.createGain();
     master.gain.value = 0.0;
+
+    // light stereo "hall" via feedback delay
+    const delay = audioCtx.createDelay();
+    delay.delayTime.value = 0.28;
+    const fb = audioCtx.createGain();
+    fb.gain.value = 0.22;
+    const wet = audioCtx.createGain();
+    wet.gain.value = 0.18;
+    delay.connect(fb); fb.connect(delay); delay.connect(wet);
     master.connect(audioCtx.destination);
-    const freqs = [146.83, 220.0, 293.66]; // D3, A3, D4
-    freqs.forEach((f, i) => {
+    wet.connect(audioCtx.destination);
+
+    leadGain = audioCtx.createGain();
+    leadGain.gain.value = 0.09;
+    leadGain.connect(master);
+    leadGain.connect(delay);
+
+    droneGain = audioCtx.createGain();
+    droneGain.gain.value = 0.055;
+    droneGain.connect(master);
+
+    // Tanpura-ish drone: low Sa, Pa, Sa
+    [Sa / 2, scale.Pa / 2, Sa].forEach((f, i) => {
       const osc = audioCtx.createOscillator();
       osc.type = "sine";
       osc.frequency.value = f;
       const g = audioCtx.createGain();
-      g.gain.value = 0.06;
+      g.gain.value = i === 2 ? 0.5 : 0.8;
+      // slow shimmer
       const lfo = audioCtx.createOscillator();
-      lfo.frequency.value = 0.15 + i * 0.05;
-      const lfoGain = audioCtx.createGain();
-      lfoGain.gain.value = 1.5;
-      lfo.connect(lfoGain);
-      lfoGain.connect(osc.frequency);
-      osc.connect(g);
-      g.connect(master);
-      osc.start();
-      lfo.start();
+      lfo.frequency.value = 0.12 + i * 0.03;
+      const lfoG = audioCtx.createGain();
+      lfoG.gain.value = 0.15;
+      lfo.connect(lfoG); lfoG.connect(g.gain);
+      osc.connect(g); g.connect(droneGain);
+      osc.start(); lfo.start();
     });
-    return master;
+
+    built = true;
   }
+
+  // a single reedy shehnai note with meend (glide) + vibrato
+  function playNote(freq, dur, glideFrom) {
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    osc.type = "sawtooth";
+    const filt = audioCtx.createBiquadFilter();
+    filt.type = "lowpass";
+    filt.frequency.setValueAtTime(1100, t);
+    filt.frequency.linearRampToValueAtTime(1700, t + dur * 0.5);
+    filt.Q.value = 7;
+    const g = audioCtx.createGain();
+    g.gain.value = 0;
+
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = 5.5;
+    const lfoG = audioCtx.createGain();
+    lfoG.gain.value = freq * 0.007;
+    lfo.connect(lfoG); lfoG.connect(osc.frequency);
+
+    osc.connect(filt); filt.connect(g); g.connect(leadGain);
+
+    if (glideFrom) {
+      osc.frequency.setValueAtTime(glideFrom, t);
+      osc.frequency.exponentialRampToValueAtTime(freq, t + 0.12);
+    } else {
+      osc.frequency.setValueAtTime(freq, t);
+    }
+
+    const a = 0.07, r = 0.2;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.9, t + a);
+    g.gain.setValueAtTime(0.9, t + Math.max(a, dur - r));
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    osc.start(t); lfo.start(t);
+    osc.stop(t + dur + 0.05); lfo.stop(t + dur + 0.05);
+  }
+
+  let idx = 0, lastFreq = null;
+  function step() {
+    if (!playing) return;
+    const [name, beats] = phrase[idx % phrase.length];
+    const dur = beats * beat;
+    if (name === "REST") {
+      lastFreq = null;
+    } else {
+      const f = scale[name];
+      playNote(f, dur * 0.94, lastFreq);
+      lastFreq = f;
+    }
+    idx++;
+    schedTimer = setTimeout(step, dur * 1000);
+  }
+
   function startMusic() {
     if (playing || !musicBtn) return;
     try {
-      if (!audioCtx) masterGain = buildAmbient();
+      if (!built) buildAudio();
       audioCtx.resume();
-      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-      masterGain.gain.setTargetAtTime(0.5, audioCtx.currentTime, 1.2);
+      master.gain.cancelScheduledValues(audioCtx.currentTime);
+      master.gain.setTargetAtTime(0.9, audioCtx.currentTime, 1.4);
       playing = true;
       musicBtn.classList.add("playing");
+      step();
     } catch (e) {
       /* audio not supported */
     }
   }
   function stopMusic() {
     if (!playing || !audioCtx) return;
-    masterGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.6);
+    master.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.5);
     playing = false;
     musicBtn.classList.remove("playing");
+    if (schedTimer) clearTimeout(schedTimer);
   }
   if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
 })();
