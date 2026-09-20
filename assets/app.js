@@ -23,17 +23,11 @@
     startMusic(); // gesture unlocks audio
   }
   if (intro) {
-    if (embedded) {
-      // inside the shell: skip the overlay, content shows immediately, music already playing
+    document.body.style.overflow = "hidden";
+    if (openBtn) openBtn.addEventListener("click", dismissIntro);
+    if (location.search.includes("preview") || location.hash === "#open") {
       intro.classList.add("hide");
       document.body.style.overflow = "";
-    } else {
-      document.body.style.overflow = "hidden";
-      if (openBtn) openBtn.addEventListener("click", dismissIntro);
-      if (location.search.includes("preview") || location.hash === "#open") {
-        intro.classList.add("hide");
-        document.body.style.overflow = "";
-      }
     }
   }
 
