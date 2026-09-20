@@ -385,14 +385,45 @@
   // keep the saved position fresh while playing
   setInterval(() => { if (playing) saveState(); }, 2000);
 
-  // Autoplay by default (from the index and every page), and carry it through.
+  // Autoplay by default: start MUTED on load (record spins immediately),
+  // then UNMUTE with a fade on the first user interaction.
   if (musicBtn && wantMusic()) {
     if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // remember intent across navigation
-    startMusic(true);                       // attempt autoplay (may be blocked by the browser)
-    // If autoplay was blocked, start on the very first user interaction.
-    const kick = () => { if (!playing && wantMusic()) startMusic(true); };
+
+    if (useFile && bgAudio) {
+      const t = LS ? parseFloat(LS.getItem("bgm_t") || "0") : 0;
+      if (!isNaN(t) && t > 0) { try { bgAudio.currentTime = t; } catch (e) {} }
+      bgAudio.muted = true;                 // muted autoplay is allowed by browsers
+      bgAudio.volume = TARGET_VOL;
+      const p = bgAudio.play();
+      if (p && p.then) {
+        p.then(() => { playing = true; musicBtn.classList.add("playing"); }).catch(() => {});
+      } else {
+        playing = true; musicBtn.classList.add("playing");
+      }
+    }
+
+    // On the first interaction anywhere, bring the sound in.
+    const unmute = () => {
+      if (!wantMusic()) return;
+      if (useFile && bgAudio) {
+        if (bgAudio.paused) {                // muted autoplay was blocked → start now
+          bgAudio.muted = false;
+          startMusic(true);
+        } else {                            // already spinning muted → fade the sound in
+          bgAudio.volume = 0;
+          bgAudio.muted = false;
+          playing = true;
+          musicBtn.classList.add("playing");
+          fadeAudio(TARGET_VOL);
+          saveState();
+        }
+      } else if (!playing) {
+        startMusic(true);
+      }
+    };
     ["pointerdown", "keydown", "touchstart", "scroll"].forEach((ev) =>
-      window.addEventListener(ev, kick, { once: true, passive: true })
+      window.addEventListener(ev, unmute, { once: true, passive: true })
     );
   }
 
