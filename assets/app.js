@@ -332,14 +332,10 @@
     } catch (e) {}
   }
 
-  function startMusic(fromResume) {
+  function startMusic() {
     if (playing || !musicBtn) return;
-    if (useFile) {
-      // resume from where the previous page left off
-      const t = LS ? parseFloat(LS.getItem("bgm_t") || "0") : 0;
-      if (!isNaN(t) && t > 0 && bgAudio.currentTime < 0.15) {
-        try { bgAudio.currentTime = t; } catch (e) {}
-      }
+    if (useFile && bgAudio) {
+      bgAudio.muted = false;
       bgAudio.volume = 0;
       const p = bgAudio.play();
       if (p && p.catch) {
@@ -349,7 +345,7 @@
           fadeAudio(TARGET_VOL);
           saveState();
         }).catch(() => {
-          // autoplay blocked (not a file error) — will start on the next tap
+          // autoplay blocked — will start on the next real gesture
           playing = false;
           musicBtn.classList.remove("playing");
         });
@@ -374,51 +370,51 @@
     musicBtn.classList.remove("playing");
     saveState();
   }
-  if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
+  if (musicBtn) musicBtn.addEventListener("click", () => { userInteracted = true; playing ? stopMusic() : startMusic(); });
 
   // keep the saved position fresh while playing
   setInterval(() => { if (playing) saveState(); }, 2000);
 
   // Autoplay by default: start MUTED on load (record spins immediately),
   // then UNMUTE with a fade on the first user interaction.
+  let userInteracted = false;
   if (musicBtn && wantMusic()) {
-    if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // remember intent across navigation
+    if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // default ON
 
+    // 1) Muted autoplay so the record starts spinning right away (browsers allow muted).
     if (useFile && bgAudio) {
-      const t = LS ? parseFloat(LS.getItem("bgm_t") || "0") : 0;
-      if (!isNaN(t) && t > 0) { try { bgAudio.currentTime = t; } catch (e) {} }
-      bgAudio.muted = true;                 // muted autoplay is allowed by browsers
+      bgAudio.muted = true;
       bgAudio.volume = TARGET_VOL;
       const p = bgAudio.play();
-      if (p && p.then) {
-        p.then(() => { playing = true; musicBtn.classList.add("playing"); }).catch(() => {});
-      } else {
-        playing = true; musicBtn.classList.add("playing");
-      }
+      if (p && p.then) p.then(() => { musicBtn.classList.add("playing"); }).catch(() => {});
     }
 
-    // On the first interaction anywhere, bring the sound in.
-    const unmute = () => {
-      if (!wantMusic()) return;
+    // 2) The first real interaction anywhere brings the actual sound in. This is the
+    //    reliable path on Chrome/Safari/mobile which block autoplay WITH sound.
+    const kEvents = ["pointerdown", "touchstart", "click", "keydown", "scroll"];
+    function removeKick() { kEvents.forEach((ev) => window.removeEventListener(ev, kick, true)); }
+    function kick(e) {
+      if (playing) { removeKick(); return; }
+      if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return; // toggle handles itself
+      if (!wantMusic()) { removeKick(); return; }
+      userInteracted = true;
       if (useFile && bgAudio) {
-        if (bgAudio.paused) {                // muted autoplay was blocked → start now
-          bgAudio.muted = false;
-          startMusic(true);
-        } else {                            // already spinning muted → fade the sound in
-          bgAudio.volume = 0;
-          bgAudio.muted = false;
+        bgAudio.muted = false;
+        if (bgAudio.paused) {
+          startMusic();               // muted autoplay was blocked → start now
+        } else {
+          bgAudio.volume = 0;         // already spinning muted → fade the sound in
           playing = true;
           musicBtn.classList.add("playing");
           fadeAudio(TARGET_VOL);
           saveState();
         }
-      } else if (!playing) {
-        startMusic(true);
+      } else {
+        startMusic();
       }
-    };
-    ["pointerdown", "keydown", "touchstart", "scroll"].forEach((ev) =>
-      window.addEventListener(ev, unmute, { once: true, passive: true })
-    );
+      if (playing) removeKick();
+    }
+    kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
   }
 
   /* ---- Pause when the page is hidden (app switch / tab change), resume on return ---- */
@@ -442,10 +438,10 @@
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       if (playing) pauseForHide();
-      else saveState();
-    } else if (playing || wantMusic()) {
-      if (playing) resumeAfterHide();
-      else startMusic(true);
+    } else if (playing) {
+      resumeAfterHide();
+    } else if (wantMusic() && userInteracted) {
+      startMusic();
     }
   });
   // save position and pause on navigation/close
