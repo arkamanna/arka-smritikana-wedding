@@ -103,16 +103,15 @@
   }
 
   /* ---------- Scroll reveal ---------- */
+  // Reveal when the element crosses ~75% down the viewport; toggle so it
+  // reverses (flies back out) when scrolled away and replays on return.
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("in");
-          io.unobserve(e.target);
-        }
+        e.target.classList.toggle("in", e.isIntersecting);
       });
     },
-    { threshold: 0.12 }
+    { threshold: 0, rootMargin: "0px 0px -25% 0px" }
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 

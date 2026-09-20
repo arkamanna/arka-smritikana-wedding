@@ -449,7 +449,8 @@ body.en .lineage p{ font-family:var(--serif-en); font-size:1.08rem; color:var(--
 body.en .lineage .res{ color:var(--ink-soft); font-style:italic; margin-top:8px; }
 
 /* ============ CONTACT CHIPS ============ */
-.contact-grid{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:22px; }
+.contact-grid{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
+.contact-grid + .contact-grid{ margin-bottom:22px; }
 .contact-chip{ display:flex; flex-direction:column; align-items:center; gap:4px;
   text-decoration:none; padding:14px 20px; border-radius:12px; min-width:130px;
   background:linear-gradient(180deg, rgba(90,10,26,.6), rgba(63,5,16,.6));
