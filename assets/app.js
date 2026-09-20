@@ -313,22 +313,47 @@
     }, 50);
   }
 
-  function startMusic() {
+  /* ---- Cross-page persistence: music continues across the index/bengali/english pages ---- */
+  const LS = (() => { try { return window.localStorage; } catch (e) { return null; } })();
+  const getFlag = () => LS && LS.getItem("bgm_on") === "1";
+  function saveState() {
+    if (!LS) return;
+    try {
+      LS.setItem("bgm_on", playing ? "1" : "0");
+      if (useFile && bgAudio) LS.setItem("bgm_t", String(bgAudio.currentTime || 0));
+    } catch (e) {}
+  }
+
+  function startMusic(fromResume) {
     if (playing || !musicBtn) return;
     if (useFile) {
+      // resume from where the previous page left off
+      const t = LS ? parseFloat(LS.getItem("bgm_t") || "0") : 0;
+      if (!isNaN(t) && t > 0 && bgAudio.currentTime < 0.15) {
+        try { bgAudio.currentTime = t; } catch (e) {}
+      }
       bgAudio.volume = 0;
       const p = bgAudio.play();
       if (p && p.catch) {
-        p.then(() => fadeAudio(TARGET_VOL))
-         .catch(() => { useFile = false; startSynth(); });
-      } else {
-        fadeAudio(TARGET_VOL);
+        p.then(() => {
+          playing = true;
+          musicBtn.classList.add("playing");
+          fadeAudio(TARGET_VOL);
+          saveState();
+        }).catch(() => {
+          // autoplay blocked (not a file error) — will start on the next tap
+          playing = false;
+          musicBtn.classList.remove("playing");
+        });
+        return;
       }
+      fadeAudio(TARGET_VOL);
     } else {
       startSynth();
     }
     playing = true;
     musicBtn.classList.add("playing");
+    saveState();
   }
   function stopMusic() {
     if (!playing) return;
@@ -339,11 +364,35 @@
     }
     playing = false;
     musicBtn.classList.remove("playing");
+    saveState();
   }
   if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
 
+  // keep the saved position fresh while playing
+  setInterval(() => { if (playing) saveState(); }, 2000);
+
+  // If music was on when leaving another page, resume here (once allowed).
+  if (getFlag() && musicBtn) {
+    startMusic(true);                       // try immediately (may be autoplay-blocked)
+    const kick = () => { if (!playing) startMusic(true); };
+    window.addEventListener("pointerdown", kick, { once: true });
+    window.addEventListener("keydown", kick, { once: true });
+  }
+
+  // On the landing/chooser page, begin music on the first interaction so it
+  // plays from the very start and carries over to the following pages.
+  if (document.body.classList.contains("chooser") && musicBtn) {
+    const startOnce = () => {
+      if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // remember intent across navigation
+      if (!playing) startMusic();
+    };
+    window.addEventListener("pointerdown", startOnce, { once: true });
+    window.addEventListener("keydown", startOnce, { once: true });
+  }
+
   /* ---- Pause when the page is hidden (app switch / tab change), resume on return ---- */
   function pauseForHide() {
+    saveState();
     if (useFile && bgAudio) {
       bgAudio.pause();
     } else if (audioCtx) {
@@ -362,10 +411,12 @@
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       if (playing) pauseForHide();
-    } else if (playing) {
-      resumeAfterHide();
+      else saveState();
+    } else if (playing || getFlag()) {
+      if (playing) resumeAfterHide();
+      else startMusic(true);
     }
   });
-  // extra safety for mobile browsers that fire pagehide/freeze
-  window.addEventListener("pagehide", () => { if (playing) pauseForHide(); });
+  // save position and pause on navigation/close
+  window.addEventListener("pagehide", () => { saveState(); if (playing) pauseForHide(); });
 })();

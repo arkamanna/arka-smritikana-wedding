@@ -150,16 +150,18 @@ body::before{
 
 /* ============ MUSIC BUTTON ============ */
 .music-btn{
-  position:fixed; right:22px; bottom:22px; z-index:60;
-  width:50px; height:50px; border-radius:50%;
-  border:1.5px solid var(--gold);
-  background:rgba(63,5,16,.7); backdrop-filter:blur(6px);
-  color:var(--gold-bright); font-size:1.3rem; cursor:pointer;
-  transition:transform .3s ease, background .3s ease;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
+  position:fixed; right:20px; bottom:20px; z-index:60;
+  width:62px; height:62px; border-radius:50%;
+  border:none; background:transparent; padding:0; cursor:pointer;
+  transition:transform .3s ease;
+  box-shadow:0 8px 20px rgba(0,0,0,.55);
 }
-.music-btn:hover{ transform:scale(1.1); }
-.music-btn.playing .note{ display:inline-block; animation:spin 3s linear infinite; }
+.music-btn:hover{ transform:scale(1.08); }
+.music-btn .vinyl{ position:absolute; inset:0; width:100%; height:100%; border-radius:50%; display:block; }
+.music-btn.playing .vinyl{ animation:spin 3.2s linear infinite; }
+.music-btn .note{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:.9rem; text-shadow:0 1px 2px rgba(0,0,0,.6); pointer-events:none; }
+.music-btn:not(.playing) .note{ opacity:.85; }
 
 /* ============ LAYOUT / SECTIONS ============ */
 .content{ position:relative; z-index:10; }
@@ -356,7 +358,7 @@ body.en .ec-map a{ font-family:var(--serif-en); font-weight:600; }
 .letter-head{ font-family:var(--bng-head); font-weight:700; color:var(--maroon);
   font-size:clamp(1.5rem,6vw,2.1rem); margin:6px 0 4px; }
 .shlok{ font-family:var(--bng); font-style:italic; color:var(--ink-soft); margin-bottom:26px; font-size:1rem; }
-.letter-body p{ font-family:var(--bng-body); color:var(--ink); font-size:clamp(1rem,3.6vw,1.12rem);
+.letter-body p{ font-family:var(--bng); color:var(--ink); font-size:clamp(1rem,3.6vw,1.12rem);
   line-height:2; margin-bottom:16px; text-align:justify; }
 .letter-body b{ color:var(--maroon); }
 .letter-sign{ margin-top:30px; font-family:var(--bng); color:var(--maroon); line-height:1.9;
@@ -407,7 +409,7 @@ body.en .rsvp-sec .rsvp-names,
 body.en .rsvp-sec .rsvp-foot{ font-family:var(--clean); font-style:italic; font-size:1rem; }
 body.en .rsvp-sec .contact-chip b{ font-family:var(--clean); font-weight:700; font-style:italic; letter-spacing:.2px; }
 .rsvp-sec .contact-chip span{ font-family:var(--clean); font-style:normal; letter-spacing:.4px; font-size:1rem; }
-body:not(.en) .rsvp-sec .contact-chip span{ font-family:var(--bng-body); letter-spacing:.5px; }
+body:not(.en) .rsvp-sec .contact-chip span{ font-family:var(--bng); letter-spacing:.5px; }
 .rsvp-sec .rsvp-btn{ display:inline-flex; align-items:center; gap:8px; }
 body.en .rsvp-sec .rsvp-btn{ font-family:var(--clean); font-style:italic; font-weight:700; }
 
