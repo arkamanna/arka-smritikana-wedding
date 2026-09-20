@@ -389,14 +389,14 @@ body.en .letter-sign{ font-family:var(--serif-en); }
 .rsvp-names .rn-line{ display:block; line-height:1.85; }
 .rsvp-names .rn-line b{ color:var(--gold-bright); }
 
-/* ---- Connect section: clean Mulish with a gentle italic ---- */
+/* ---- Connect section: elegant Cormorant serif (matches The Celebrations) ---- */
 body.en .rsvp-sec .rsvp-names,
-body.en .rsvp-sec .rsvp-foot{ font-family:var(--clean); font-style:italic; font-size:1rem; }
-body.en .rsvp-sec .contact-chip b{ font-family:var(--clean); font-weight:700; font-style:italic; letter-spacing:.2px; }
-.rsvp-sec .contact-chip span{ font-family:var(--clean); font-style:normal; letter-spacing:.4px; font-size:1rem; }
+body.en .rsvp-sec .rsvp-foot{ font-family:var(--serif-en); font-style:normal; font-size:1.1rem; }
+body.en .rsvp-sec .contact-chip b{ font-family:var(--serif-en); font-weight:600; font-style:normal; letter-spacing:.2px; font-size:1.15rem; }
+.rsvp-sec .contact-chip span{ font-family:var(--serif-en); font-style:normal; letter-spacing:.4px; font-size:1.05rem; }
 body:not(.en) .rsvp-sec .contact-chip span{ font-family:var(--bng-body); letter-spacing:.5px; }
 .rsvp-sec .rsvp-btn{ display:inline-flex; align-items:center; gap:8px; }
-body.en .rsvp-sec .rsvp-btn{ font-family:var(--clean); font-style:italic; font-weight:700; }
+body.en .rsvp-sec .rsvp-btn{ font-family:var(--serif-en); font-style:normal; font-weight:600; }
 
 /* WhatsApp brand icon (green) */
 .wa-ico{ width:1.15em; height:1.15em; display:inline-block; vertical-align:-.18em; background:#25D366;
