@@ -341,4 +341,31 @@
     musicBtn.classList.remove("playing");
   }
   if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
+
+  /* ---- Pause when the page is hidden (app switch / tab change), resume on return ---- */
+  function pauseForHide() {
+    if (useFile && bgAudio) {
+      bgAudio.pause();
+    } else if (audioCtx) {
+      if (schedTimer) clearTimeout(schedTimer);
+      audioCtx.suspend();
+    }
+  }
+  function resumeAfterHide() {
+    if (useFile && bgAudio) {
+      bgAudio.play().catch(() => {});
+    } else if (audioCtx) {
+      audioCtx.resume();
+      step();
+    }
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (playing) pauseForHide();
+    } else if (playing) {
+      resumeAfterHide();
+    }
+  });
+  // extra safety for mobile browsers that fire pagehide/freeze
+  window.addEventListener("pagehide", () => { if (playing) pauseForHide(); });
 })();
