@@ -626,6 +626,7 @@ body:not(.en) .foot-event .fe-date{ font-family:var(--bng); }
 /* ============ RESPONSIVE / MOBILE ============ */
 @media (max-width:760px){
   .event-grid, .event-grid.two{ max-width:420px; }
+  .festoon{ --s:.78; height:172px; }
 }
 @media (max-width:560px){
   .ornate-frame{ inset:8px; }
