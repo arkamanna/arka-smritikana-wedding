@@ -274,26 +274,72 @@
     schedTimer = setTimeout(step, dur * 1000);
   }
 
-  function startMusic() {
-    if (playing || !musicBtn) return;
+  function startSynth() {
     try {
       if (!built) buildAudio();
       audioCtx.resume();
       master.gain.cancelScheduledValues(audioCtx.currentTime);
       master.gain.setTargetAtTime(0.9, audioCtx.currentTime, 1.4);
-      playing = true;
-      musicBtn.classList.add("playing");
       step();
     } catch (e) {
       /* audio not supported */
     }
   }
-  function stopMusic() {
-    if (!playing || !audioCtx) return;
+  function stopSynth() {
+    if (!audioCtx) return;
     master.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.5);
+    if (schedTimer) clearTimeout(schedTimer);
+  }
+
+  /* ---- Real audio track (the downloaded 2-min clip, looped) with synth fallback ---- */
+  const bgAudio = document.getElementById("bgAudio");
+  let useFile = !!bgAudio;
+  let fadeTimer = null;
+  const TARGET_VOL = 0.55;
+  if (bgAudio) {
+    bgAudio.loop = true;
+    bgAudio.addEventListener("error", () => { useFile = false; }, { once: true });
+  }
+  function fadeAudio(to, done) {
+    if (fadeTimer) clearInterval(fadeTimer);
+    const stepv = (to - bgAudio.volume) / 30;
+    fadeTimer = setInterval(() => {
+      let v = bgAudio.volume + stepv;
+      if ((stepv > 0 && v >= to) || (stepv < 0 && v <= to)) {
+        v = to;
+        clearInterval(fadeTimer);
+        if (done) done();
+      }
+      bgAudio.volume = Math.min(1, Math.max(0, v));
+    }, 50);
+  }
+
+  function startMusic() {
+    if (playing || !musicBtn) return;
+    if (useFile) {
+      bgAudio.volume = 0;
+      const p = bgAudio.play();
+      if (p && p.catch) {
+        p.then(() => fadeAudio(TARGET_VOL))
+         .catch(() => { useFile = false; startSynth(); });
+      } else {
+        fadeAudio(TARGET_VOL);
+      }
+    } else {
+      startSynth();
+    }
+    playing = true;
+    musicBtn.classList.add("playing");
+  }
+  function stopMusic() {
+    if (!playing) return;
+    if (useFile && bgAudio) {
+      fadeAudio(0, () => bgAudio.pause());
+    } else {
+      stopSynth();
+    }
     playing = false;
     musicBtn.classList.remove("playing");
-    if (schedTimer) clearTimeout(schedTimer);
   }
   if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
 })();
