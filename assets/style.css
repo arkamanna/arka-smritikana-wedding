@@ -65,14 +65,20 @@ body::before{
 
 .intro-frame{
   position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
   text-align:center;
-  padding:64px 56px;
+  padding:48px 34px;
   border:2px solid var(--gold-deep);
   border-radius:6px;
   box-shadow:inset 0 0 0 6px rgba(226,192,120,.12), var(--shadow);
   animation:frameGlow 4s ease-in-out infinite alternate;
-  width:min(92vw,560px);
-  max-width:92vw;
+  width:min(92vw,430px);
+  aspect-ratio:10 / 17;      /* mobile / phone portrait shape */
+  max-height:92vh;
+}
+/* On larger screens keep the portrait feel but a little wider */
+@media (min-width:761px){
+  .intro-frame{ width:min(86vw,600px); aspect-ratio:5 / 6; padding:56px 54px; }
 }
 @keyframes frameGlow{
   from{ box-shadow:inset 0 0 0 6px rgba(226,192,120,.1), 0 0 30px rgba(226,192,120,.15); }
