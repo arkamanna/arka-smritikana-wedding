@@ -141,10 +141,10 @@ body::before{
 /* ============ BACKGROUND MOTIFS (gold chakras + hanging bulbs) ============ */
 .bg-decor{ position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
 .chakra-wrap{ position:absolute; top:50%; transform:translateY(-50%); }
-.chakra-wrap.left{ left:-10%; }
-.chakra-wrap.right{ right:-10%; transform:translateY(-50%) scaleX(-1); }
-.chakra{ display:block; height:min(72vh,560px); width:auto; opacity:.40;
-  animation:spin 140s linear infinite; }
+.chakra-wrap.left{ left:-13%; }
+.chakra-wrap.right{ right:-13%; }
+.chakra{ display:block; width:min(46vw,380px); height:auto; opacity:.42;
+  animation:spin 45s linear infinite; }
 .chakra-wrap.right .chakra{ animation-direction:reverse; }
 .bulbs{ position:absolute; top:-6px; width:min(30vw,175px); opacity:.55;
   transform-origin:top center; }
@@ -624,8 +624,8 @@ body:not(.en) .foot-event .fe-date{ font-family:var(--bng); }
   .person-photo{ width:175px; height:175px; }
   .cap-icon{ height:66px; }
   .cap-icon.cap-mukut{ height:52px; }
-  .chakra{ height:44vh; opacity:.26; }
-  .bulbs{ width:26vw; opacity:.42; }
+  .chakra{ width:52vw; opacity:.3; }
+  .bulbs{ width:26vw; opacity:.6; }
   .intro-frame{ padding:44px 26px; }
   body:not(.en) .lineage p{ grid-template-columns:80px 1fr; font-size:.96rem; }
   .event-card{ width:100%; max-width:420px; }

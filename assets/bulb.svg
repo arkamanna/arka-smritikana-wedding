@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 300">
+  <g fill="none" stroke="#e2c078" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cord -->
+    <line x1="60" y1="0" x2="60" y2="150"/>
+    <!-- screw base -->
+    <path d="M51 150 h18 M49 156 h22 M51 162 h18"/>
+    <rect x="49" y="149" width="22" height="17" rx="3"/>
+    <!-- glass bulb -->
+    <path d="M60 168 C93 177 101 216 84 246 C74 264 46 264 36 246 C19 216 27 177 60 168 Z"/>
+    <!-- flower inside -->
+    <g stroke-width="1.6">
+      <circle cx="60" cy="224" r="5.5"/>
+      <circle cx="60" cy="211" r="5"/>
+      <circle cx="72" cy="221" r="5"/>
+      <circle cx="67" cy="235" r="5"/>
+      <circle cx="53" cy="235" r="5"/>
+      <circle cx="48" cy="221" r="5"/>
+    </g>
+  </g>
+</svg>
