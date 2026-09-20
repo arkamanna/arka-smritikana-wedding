@@ -42,18 +42,39 @@
     <p class="choose-prompt">আপনার ভাষা নির্বাচন করুন &nbsp;·&nbsp; Choose your language</p>
 
     <div class="choose-actions">
-      <a class="choose-btn" href="bengali.html">
+      <button type="button" class="choose-btn" data-view="bengali.html">
         <span class="cb-main">বাংলা</span>
         <span class="cb-sub">Bengali Invitation</span>
-      </a>
-      <a class="choose-btn alt" href="english.html">
+      </button>
+      <button type="button" class="choose-btn alt" data-view="english.html">
         <span class="cb-main en-serif">English</span>
         <span class="cb-sub">English Invitation</span>
-      </a>
+      </button>
     </div>
   </div>
 </main>
 
+<!-- Content loads here so the music (in this parent shell) never restarts on language switch -->
+<iframe id="viewer" class="viewer" title="Invitation"></iframe>
+
 <script src="assets/app.js"></script>
+<script>
+  (function () {
+    var viewer = document.getElementById("viewer");
+    var chooser = document.querySelector(".choose-wrap");
+    function openView(src) {
+      viewer.src = src;
+      document.body.classList.add("viewing");
+    }
+    document.querySelectorAll(".choose-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        openView(btn.getAttribute("data-view"));
+      });
+    });
+    // deep link: index.html#bengali or #english opens directly
+    var h = (location.hash || "").replace("#", "");
+    if (h === "bengali" || h === "english") openView(h + ".html");
+  })();
+</script>
 </body>
 </html>

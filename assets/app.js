@@ -5,6 +5,14 @@
   "use strict";
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // When embedded in the shell (index.html iframe), the parent owns the music.
+  const embedded = window.self !== window.top;
+  if (embedded) {
+    const mb = document.getElementById("musicBtn");
+    if (mb) mb.style.display = "none";
+    const au = document.getElementById("bgAudio");
+    if (au) { try { au.pause(); au.muted = true; } catch (e) {} }
+  }
 
   /* ---------- Intro overlay ---------- */
   const intro = document.getElementById("intro");
@@ -15,12 +23,17 @@
     startMusic(); // gesture unlocks audio
   }
   if (intro) {
-    document.body.style.overflow = "hidden";
-    if (openBtn) openBtn.addEventListener("click", dismissIntro);
-    // allow deep-linking / preview to skip the intro
-    if (location.search.includes("preview") || location.hash === "#open") {
+    if (embedded) {
+      // inside the shell: skip the overlay, content shows immediately, music already playing
       intro.classList.add("hide");
       document.body.style.overflow = "";
+    } else {
+      document.body.style.overflow = "hidden";
+      if (openBtn) openBtn.addEventListener("click", dismissIntro);
+      if (location.search.includes("preview") || location.hash === "#open") {
+        intro.classList.add("hide");
+        document.body.style.overflow = "";
+      }
     }
   }
 
@@ -148,7 +161,7 @@
   }
 
   /* ---------- Music: subtle shehnai melody over a soft tanpura drone ---------- */
-  const musicBtn = document.getElementById("musicBtn");
+  const musicBtn = embedded ? null : document.getElementById("musicBtn");
   let audioCtx = null;
   let master = null;      // overall gain (fade in/out)
   let leadGain = null;    // shehnai
@@ -290,8 +303,8 @@
     if (schedTimer) clearTimeout(schedTimer);
   }
 
-  /* ---- Real audio track (the downloaded 2-min clip, looped) with synth fallback ---- */
-  const bgAudio = document.getElementById("bgAudio");
+  /* ---- Real audio track (the looped clip) with synth fallback ---- */
+  const bgAudio = embedded ? null : document.getElementById("bgAudio");
   let useFile = !!bgAudio;
   let fadeTimer = null;
   const TARGET_VOL = 0.55;

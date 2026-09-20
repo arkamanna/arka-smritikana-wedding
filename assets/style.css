@@ -521,6 +521,13 @@ body.chooser{ display:flex; align-items:center; justify-content:center; min-heig
 .choose-btn.alt:hover{ background:rgba(226,192,120,.1); }
 .cb-main{ font-family:var(--bng-head); font-weight:700; font-size:1.5rem; }
 .cb-sub{ font-family:var(--serif-en); font-size:.9rem; opacity:.85; letter-spacing:.5px; }
+.choose-btn{ border:none; cursor:pointer; font-family:inherit; }
+
+/* ---- Shell iframe viewer (keeps music playing across language switches) ---- */
+.viewer{ position:fixed; inset:0; width:100%; height:100%; border:none; display:none; z-index:50;
+  background:var(--maroon-deep); }
+body.viewing .viewer{ display:block; }
+body.viewing .choose-wrap{ display:none; }
 
 /* ============ ENTRANCE / FLY-IN ANIMATIONS ============ */
 .reveal.reveal-left{ transform:translateX(-90px) rotate(-5deg) scale(.94); }
