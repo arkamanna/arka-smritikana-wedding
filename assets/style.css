@@ -290,7 +290,7 @@ body::before{
   box-shadow:0 12px 28px rgba(0,0,0,.35), 0 0 0 9px rgba(226,192,120,.15);
   transition:transform .4s cubic-bezier(.2,.7,.3,1); }
 .person-card:hover .person-photo{ transform:scale(1.05); }
-.cap-icon{ display:block; margin:0 auto 10px; height:56px; width:auto; max-width:80%;
+.cap-icon{ display:block; margin:0 auto 12px; height:78px; width:auto; max-width:85%;
   filter:drop-shadow(0 3px 6px rgba(0,0,0,.25)); position:relative; z-index:2; }
 .role{ font-family:var(--cinzel); letter-spacing:3px; color:var(--gold-deep);
   font-size:.85rem; margin-bottom:8px; text-transform:uppercase; }
@@ -605,6 +605,7 @@ body:not(.en) .foot-event .fe-date{ font-family:var(--bng); }
   .couple{ gap:18px; }
   .person-card{ width:100%; max-width:440px; padding:34px 22px; }
   .person-photo{ width:175px; height:175px; }
+  .cap-icon{ height:66px; }
   .intro-frame{ padding:44px 26px; }
   body:not(.en) .lineage p{ grid-template-columns:80px 1fr; font-size:.96rem; }
   .event-card{ width:100%; max-width:420px; }
