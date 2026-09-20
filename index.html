@@ -1,234 +1,54 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Arka ❤ Smritikana — শুভ বিবাহ</title>
-<meta name="description" content="Wedding invitation of Arka & Smritikana — পরিণয় সংবাদ" />
+<title>Arka ❤ Smritikana — Wedding Invitation</title>
+<meta name="description" content="Wedding invitation of Arka Manna & Smritikana Paik — choose your language" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@400;500;600&family=Great+Vibes&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Baloo+Da+2:wght@400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Cinzel:wght@500;600&family=Great+Vibes&family=Noto+Serif+Bengali:wght@500;600;700&family=Baloo+Da+2:wght@600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/style.css" />
 </head>
-<body>
+<body class="chooser">
 
-<!-- ===== INTRO / ENVELOPE OVERLAY ===== -->
-<div id="intro" class="intro">
-  <div class="intro-frame">
-    <div class="intro-motif" aria-hidden="true"></div>
-    <p class="intro-sanskrit">|| শ্রী শ্রী প্রজাপতয়ে নমঃ ||</p>
-    <h1 class="intro-names">
-      <span>অর্ক</span>
-      <span class="amp">&amp;</span>
-      <span>স্মৃতিকণা</span>
-    </h1>
-    <p class="intro-sub">শুভ পরিণয়</p>
-    <button id="openBtn" class="open-btn">
-      <span class="open-btn-inner">নিমন্ত্রণ খুলুন</span>
-    </button>
-  </div>
-</div>
-
-<!-- ===== ORNATE FIXED FRAME ===== -->
 <div class="ornate-frame" aria-hidden="true">
-  <span class="corner tl"></span>
-  <span class="corner tr"></span>
-  <span class="corner bl"></span>
-  <span class="corner br"></span>
+  <span class="corner tl"></span><span class="corner tr"></span>
+  <span class="corner bl"></span><span class="corner br"></span>
 </div>
 
-<!-- ===== FLOATING PETALS LAYER ===== -->
 <div id="petals" class="petals" aria-hidden="true"></div>
 
-<!-- ===== MUSIC TOGGLE ===== -->
-<button id="musicBtn" class="music-btn" title="আবহ সঙ্গীত" aria-label="Toggle music">
-  <span class="note">♪</span>
-</button>
+<main class="choose-wrap">
+  <div class="sparkles" id="sparkles" aria-hidden="true"></div>
 
-<main id="content" class="content">
+  <div class="choose-card">
+    <div class="intro-motif" aria-hidden="true"></div>
+    <p class="choose-sanskrit">॥ শ্রী শ্রী প্রজাপতয়ে নমঃ ॥</p>
 
-  <!-- ============ HERO ============ -->
-  <section class="section hero" id="hero">
-    <div class="sparkles" id="sparkles" aria-hidden="true"></div>
-    <p class="reveal hero-kicker">॥ পরিণয় সংবাদ ॥</p>
+    <h1 class="choose-names">
+      <span class="cn-bn">অর্ক</span>
+      <span class="cn-amp">❋</span>
+      <span class="cn-bn">স্মৃতিকণা</span>
+    </h1>
+    <p class="choose-sub">Arka Manna &nbsp;·&nbsp; Smritikana Paik</p>
+    <p class="choose-date">১৩ – ১৫ December 2026 · Berhampore</p>
 
-    <div class="wreath-wrap reveal">
-      <div class="wreath" id="wreath" aria-hidden="true"></div>
-      <div class="wreath-core">
-        <p class="wed-of">THE WEDDING OF</p>
-        <h2 class="name-en">Arka</h2>
-        <span class="amp-en">&amp;</span>
-        <h2 class="name-en">Smritikana</h2>
-      </div>
+    <div class="lotus-divider" aria-hidden="true"></div>
+    <p class="choose-prompt">আপনার ভাষা নির্বাচন করুন &nbsp;·&nbsp; Choose your language</p>
+
+    <div class="choose-actions">
+      <a class="choose-btn" href="bengali.html">
+        <span class="cb-main">বাংলা</span>
+        <span class="cb-sub">Bengali Invitation</span>
+      </a>
+      <a class="choose-btn alt" href="english.html">
+        <span class="cb-main en-serif">English</span>
+        <span class="cb-sub">English Invitation</span>
+      </a>
     </div>
-
-    <p class="reveal blessing">
-      ॥ নবজীবনের পথে মিলনের তরী<br />
-      বিধাতার আশীর্বাদ নিয়ে যাক ভরি ॥
-    </p>
-
-    <div class="scroll-hint reveal">
-      <span>নিচে দেখুন</span>
-      <span class="chevron"></span>
-    </div>
-  </section>
-
-  <!-- ============ COUNTDOWN ============ -->
-  <section class="section countdown-sec" id="countdown">
-    <div class="panel reveal">
-      <div class="lotus-divider" aria-hidden="true"></div>
-      <h3 class="script-head">শুভ লগ্নের অপেক্ষায়</h3>
-      <div class="countdown" id="clock">
-        <div class="unit"><span class="num" id="cd-days">00</span><span class="lbl">দিন</span></div>
-        <div class="unit"><span class="num" id="cd-hours">00</span><span class="lbl">ঘণ্টা</span></div>
-        <div class="unit"><span class="num" id="cd-mins">00</span><span class="lbl">মিনিট</span></div>
-        <div class="unit"><span class="num" id="cd-secs">00</span><span class="lbl">সেকেন্ড</span></div>
-      </div>
-      <p class="cd-date">রবিবার · ১৩ই ডিসেম্বর, ২০২৬</p>
-    </div>
-  </section>
-
-  <!-- ============ INTRODUCTION (পরিচিতি) ============ -->
-  <section class="section intro-sec" id="parichiti">
-    <div class="hanging-lights" aria-hidden="true">
-      <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
-      <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
-    </div>
-
-    <h3 class="banner reveal">পরিচিতি</h3>
-
-    <div class="couple">
-      <article class="person-card reveal">
-        <div class="mandala" aria-hidden="true"></div>
-        <p class="role">পাত্র</p>
-        <h4 class="pname">অর্ক দাশগুপ্ত</h4>
-        <p class="pline">পিতা: শ্রী সুবীর দাশগুপ্ত</p>
-        <p class="pline">মাতা: শ্রীমতী জয়িতা দাশগুপ্ত</p>
-      </article>
-
-      <div class="union-mark reveal" aria-hidden="true">
-        <span class="knot"></span>
-      </div>
-
-      <article class="person-card reveal">
-        <div class="mandala" aria-hidden="true"></div>
-        <p class="role">পাত্রী</p>
-        <h4 class="pname">স্মৃতিকণা সাহা</h4>
-        <p class="pline">পিতা: শ্রী শান্তি সাহা</p>
-        <p class="pline">মাতা: শ্রীমতী সবিতা সাহা</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ============ EVENT / SMARAKLIPI ============ -->
-  <section class="section event-sec" id="event">
-    <div class="kalash left" aria-hidden="true"></div>
-    <div class="kalash right" aria-hidden="true"></div>
-
-    <h3 class="banner reveal">স্মারকলিপি</h3>
-
-    <div class="event-grid">
-      <div class="event-card reveal">
-        <div class="ec-icon">🌼</div>
-        <p class="ec-title">শুভবিবাহ</p>
-        <p class="ec-line">২৯শে অগ্রহায়ণ, ১৪৩৩</p>
-        <p class="ec-line-strong">রবিবার, ১৩ই ডিসেম্বর, ২০২৬</p>
-        <p class="ec-sub">লগ্ন: সন্ধ্যা ৭টা ৩১ মিনিট</p>
-      </div>
-
-      <div class="event-card reveal">
-        <div class="ec-icon">🪔</div>
-        <p class="ec-title">বৌভাত</p>
-        <p class="ec-line">৩০শে অগ্রহায়ণ, ১৪৩৩</p>
-        <p class="ec-line-strong">সোমবার, ১৪ই ডিসেম্বর, ২০২৬</p>
-        <p class="ec-sub">সন্ধ্যা ৭টা থেকে</p>
-      </div>
-
-      <div class="event-card reveal">
-        <div class="ec-icon">📍</div>
-        <p class="ec-title">অনুষ্ঠানস্থল</p>
-        <p class="ec-line-strong">প্রীতি প্যালেস</p>
-        <p class="ec-line">সল্টলেক সেক্টর ৫, কলকাতা</p>
-        <p class="ec-sub"><a href="https://maps.google.com" target="_blank" rel="noopener">মানচিত্রে দেখুন →</a></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ BENGALI INVITATION LETTER ============ -->
-  <section class="section letter-sec" id="letter">
-    <div class="letter reveal">
-      <p class="om">॥ ঔঁ ॥</p>
-      <h3 class="letter-head">শ্রী শ্রী প্রজাপতয়ে নমঃ</h3>
-      <p class="shlok">যদিদং হৃদয়ং তব তদস্তু হৃদয়ং মম</p>
-      <div class="letter-body">
-        <p>সবিনয় নিবেদন,</p>
-        <p>
-          মহাশয়/মহাশয়া, প্রজাপতির শুভ আশীর্বাদে মাঙ্গলিক শানাইয়ের সুরে সুর মিলিয়ে
-          পবিত্র বেদমন্ত্র উচ্চারণের মধ্য দিয়ে দুটি সরল প্রাণ নতুন সুতোর বাঁধনে আবদ্ধ হয়ে
-          রঙিন ভবিষ্যৎ পূরণ করতে চলেছে।
-        </p>
-        <p>
-          আগামী <b>২৯শে অগ্রহায়ণ, ১৪৩৩ (ইং ১৩ই ডিসেম্বর, ২০২৬), রবিবার</b> আমাদের একমাত্র পুত্র
-          <b>অর্ক</b>-এর সহিত শ্রী শান্তি সাহা ও শ্রীমতী সবিতা সাহার একমাত্র কন্যা
-          <b>স্মৃতিকণা</b>-র শুভ পরিণয় সুসম্পন্ন হইবে।
-        </p>
-        <p>
-          এই শুভ পর্বে আপনি সপরিবারে উপস্থিত থাকিয়া নবদম্পতিকে আশীর্বাদ দানে বাধিত করিবেন।
-          পত্রযোগে নিমন্ত্রণের ত্রুটি মার্জনীয়।
-        </p>
-      </div>
-      <div class="letter-sign">
-        <p class="from">বিনীত / বিনীতা</p>
-        <p>সুবীর দাশগুপ্ত</p>
-        <p>জয়িতা দাশগুপ্ত</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ ENGLISH ARCH INVITE ============ -->
-  <section class="section arch-sec" id="english">
-    <div class="arch reveal">
-      <div class="arch-flowers left" aria-hidden="true"></div>
-      <div class="arch-flowers right" aria-hidden="true"></div>
-      <div class="arch-inner">
-        <div class="lotus-top" aria-hidden="true"></div>
-        <p class="arch-om">॥ Om Shree Prajapataye Namah ॥</p>
-        <p class="arch-invite">Sri Subir Dasgupta &amp; Smt. Jayita Dasgupta<br/>
-        cordially invite you to the auspicious wedding of their beloved son</p>
-        <h2 class="arch-name">Arka</h2>
-        <p class="arch-with">with</p>
-        <h2 class="arch-name">Smritikana</h2>
-        <p class="arch-do">D/o Sri Shanti Saha &amp; Smt. Sabita Saha</p>
-      </div>
-      <div class="elephants" aria-hidden="true">
-        <span class="ele left">🐘</span>
-        <span class="ele right">🐘</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ RSVP ============ -->
-  <section class="section rsvp-sec" id="rsvp">
-    <div class="panel reveal">
-      <div class="lotus-divider" aria-hidden="true"></div>
-      <h3 class="script-head">R.S.V.P.</h3>
-      <p class="rsvp-names">শ্রী সুবীর দাশগুপ্ত &nbsp;·&nbsp; শ্রীমতী জয়িতা দাশগুপ্ত</p>
-      <div class="rsvp-actions">
-        <a class="rsvp-btn" href="tel:+911111111111">📞 +91 11111 11111</a>
-        <a class="rsvp-btn ghost" href="https://wa.me/911111111111" target="_blank" rel="noopener">💬 WhatsApp</a>
-      </div>
-      <p class="rsvp-foot">আপনার উপস্থিতিই আমাদের পরম আনন্দ 🌸</p>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <p class="foot-names">অর্ক &nbsp;❤&nbsp; স্মৃতিকণা</p>
-    <p class="foot-sub">১৩ · ১২ · ২০২৬</p>
-    <p class="foot-credit">Made with love</p>
-  </footer>
-
+  </div>
 </main>
 
 <script src="assets/app.js"></script>

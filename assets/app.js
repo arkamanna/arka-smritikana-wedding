@@ -1,23 +1,27 @@
 /* ============================================================
-   Arka & Smritikana — interactions & animations
+   Arka & Smritikana — interactions & animations (shared)
    ============================================================ */
 (function () {
   "use strict";
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------- Intro overlay ---------- */
   const intro = document.getElementById("intro");
   const openBtn = document.getElementById("openBtn");
   function dismissIntro() {
-    intro.classList.add("hide");
+    if (intro) intro.classList.add("hide");
     document.body.style.overflow = "";
     startMusic(); // gesture unlocks audio
   }
-  document.body.style.overflow = "hidden";
-  openBtn.addEventListener("click", dismissIntro);
-  // allow deep-linking / preview to skip the intro
-  if (location.search.includes("preview") || location.hash === "#open") {
-    intro.classList.add("hide");
-    document.body.style.overflow = "";
+  if (intro) {
+    document.body.style.overflow = "hidden";
+    if (openBtn) openBtn.addEventListener("click", dismissIntro);
+    // allow deep-linking / preview to skip the intro
+    if (location.search.includes("preview") || location.hash === "#open") {
+      intro.classList.add("hide");
+      document.body.style.overflow = "";
+    }
   }
 
   /* ---------- Star wreath (circle of stars) ---------- */
@@ -74,8 +78,7 @@
     petalsLayer.appendChild(p);
     setTimeout(() => p.remove(), dur * 1000 + 500);
   }
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduced) {
+  if (petalsLayer && !reduced) {
     for (let i = 0; i < 8; i++) setTimeout(makePetal, i * 500);
     setInterval(makePetal, 1400);
   }
@@ -90,50 +93,53 @@
         }
       });
     },
-    { threshold: 0.15 }
+    { threshold: 0.12 }
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Countdown ---------- */
-  const target = new Date("2026-12-13T19:31:00+05:30").getTime();
-  const bn = (n) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
-  const el = {
-    d: document.getElementById("cd-days"),
-    h: document.getElementById("cd-hours"),
-    m: document.getElementById("cd-mins"),
-    s: document.getElementById("cd-secs"),
-  };
-  function tick() {
-    const diff = target - Date.now();
-    if (diff <= 0) {
-      [el.d, el.h, el.m, el.s].forEach((n) => n && (n.textContent = "০০"));
-      return;
+  /* ---------- Countdown (configurable per page) ---------- */
+  const clock = document.getElementById("clock");
+  if (clock) {
+    const target = new Date(clock.dataset.target || "2026-12-13T10:00:00+05:30").getTime();
+    const isBn = clock.dataset.lang === "bn";
+    const bn = (n) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
+    const fmt = (n) => {
+      const s = String(n).padStart(2, "0");
+      return isBn ? bn(s) : s;
+    };
+    const el = {
+      d: document.getElementById("cd-days"),
+      h: document.getElementById("cd-hours"),
+      m: document.getElementById("cd-mins"),
+      s: document.getElementById("cd-secs"),
+    };
+    function tick() {
+      const diff = target - Date.now();
+      const clamp = Math.max(0, diff);
+      const days = Math.floor(clamp / 86400000);
+      const hours = Math.floor((clamp % 86400000) / 3600000);
+      const mins = Math.floor((clamp % 3600000) / 60000);
+      const secs = Math.floor((clamp % 60000) / 1000);
+      if (el.d) el.d.textContent = fmt(days);
+      if (el.h) el.h.textContent = fmt(hours);
+      if (el.m) el.m.textContent = fmt(mins);
+      if (el.s) el.s.textContent = fmt(secs);
     }
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    if (el.d) el.d.textContent = bn(String(days).padStart(2, "0"));
-    if (el.h) el.h.textContent = bn(String(hours).padStart(2, "0"));
-    if (el.m) el.m.textContent = bn(String(mins).padStart(2, "0"));
-    if (el.s) el.s.textContent = bn(String(secs).padStart(2, "0"));
+    tick();
+    setInterval(tick, 1000);
   }
-  tick();
-  setInterval(tick, 1000);
 
-  /* ---------- Music (WebAudio ambient shehnai-like drone) ---------- */
+  /* ---------- Music (WebAudio ambient tanpura-like drone) ---------- */
   const musicBtn = document.getElementById("musicBtn");
   let audioCtx = null;
   let playing = false;
-  let nodes = [];
+  let masterGain = null;
 
   function buildAmbient() {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const master = audioCtx.createGain();
     master.gain.value = 0.0;
     master.connect(audioCtx.destination);
-
-    // soft drone chord (tanpura-like) with gentle vibrato
     const freqs = [146.83, 220.0, 293.66]; // D3, A3, D4
     freqs.forEach((f, i) => {
       const osc = audioCtx.createOscillator();
@@ -141,7 +147,6 @@
       osc.frequency.value = f;
       const g = audioCtx.createGain();
       g.gain.value = 0.06;
-      // vibrato
       const lfo = audioCtx.createOscillator();
       lfo.frequency.value = 0.15 + i * 0.05;
       const lfoGain = audioCtx.createGain();
@@ -152,14 +157,11 @@
       g.connect(master);
       osc.start();
       lfo.start();
-      nodes.push(osc, lfo);
     });
     return master;
   }
-
-  let masterGain = null;
   function startMusic() {
-    if (playing) return;
+    if (playing || !musicBtn) return;
     try {
       if (!audioCtx) masterGain = buildAmbient();
       audioCtx.resume();
@@ -177,5 +179,5 @@
     playing = false;
     musicBtn.classList.remove("playing");
   }
-  musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
+  if (musicBtn) musicBtn.addEventListener("click", () => (playing ? stopMusic() : startMusic()));
 })();
