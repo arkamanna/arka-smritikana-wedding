@@ -323,6 +323,10 @@ body.en .pname{ font-size:clamp(1.3rem,5vw,1.8rem); }
   transition:transform .4s cubic-bezier(.2,.7,.3,1), box-shadow .4s ease, border-color .4s ease; }
 .event-card:hover{ box-shadow:0 26px 56px rgba(0,0,0,.45); border-color:var(--gold-bright); }
 .ec-icon{ font-size:2.4rem; margin-bottom:12px; animation:bob 3.5s ease-in-out infinite; }
+.ec-icon-imgs{ display:flex; align-items:center; justify-content:center; gap:10px; }
+.ec-mini{ width:52px; height:52px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--gold); box-shadow:0 4px 12px rgba(0,0,0,.4); }
+.ec-arrow{ color:var(--gold-bright); font-size:1.5rem; line-height:1; }
 .ec-title{ font-family:var(--bng-head); font-weight:700; color:var(--gold-bright);
   font-size:1.32rem; margin-bottom:14px; }
 .ec-line{ font-family:var(--bng); color:var(--cream); font-size:1rem; line-height:1.7; opacity:.9; }
