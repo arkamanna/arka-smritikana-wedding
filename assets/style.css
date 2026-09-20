@@ -140,9 +140,9 @@ body::before{
 
 /* ============ BACKGROUND MOTIFS (gold chakras + hanging bulbs) ============ */
 .bg-decor{ position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
-.chakra-wrap{ position:absolute; transform:translateY(-50%); }
-.chakra-wrap.left{ left:-14%; top:40%; }
-.chakra-wrap.right{ right:-14%; top:62%; transform:translateY(-50%) scaleX(-1); }
+.chakra-wrap{ position:absolute; }
+.chakra-wrap.left{ left:0; top:40%; transform:translate(-50%,-50%); }
+.chakra-wrap.right{ right:0; top:62%; transform:translate(50%,-50%) scaleX(-1); }
 .chakra{ display:block; width:min(54vw,470px); height:auto; opacity:.32;
   animation:spin 40s linear infinite; }
 .chakra-wrap.right .chakra{ animation-direction:reverse; }
