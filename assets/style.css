@@ -187,7 +187,7 @@ body::before{
 .wreath{ position:absolute; inset:0; animation:spin 60s linear infinite; }
 .wreath .star{ position:absolute; left:50%; top:50%; color:var(--gold-bright);
   font-size:15px; transform-origin:0 0; }
-.wreath-core{ text-align:center; }
+.wreath-core{ text-align:center; transform:translateY(-6%); }
 .wed-of{ font-family:var(--cinzel); letter-spacing:4px; font-size:clamp(.7rem,3vw,.9rem);
   color:var(--gold); margin-bottom:6px; }
 .name-en{ font-family:var(--serif-en); font-weight:600; font-style:italic;
