@@ -148,15 +148,16 @@ body::before{
 .chakra-wrap.right .chakra{ animation-direction:reverse; }
 
 /* Hanging festoon of flower bulbs from a wire */
-.festoon{ position:fixed; top:0; left:0; right:0; height:210px; z-index:1; pointer-events:none; }
+.festoon{ --s:1; position:fixed; top:0; left:0; right:0; height:210px; z-index:1; pointer-events:none; }
 .festoon .wire{ position:absolute; top:12px; left:1%; right:1%; height:0;
   border-top:2px solid #e2c078; opacity:.5; }
-.fb{ position:absolute; top:var(--t); left:var(--l); width:var(--w);
-  margin-left:calc(var(--w) / -2);
-  transform-origin:50% calc(12px - var(--t));
+.fb{ position:absolute; left:var(--l); top:calc(var(--t) * var(--s));
+  width:calc(var(--w) * var(--s));
+  margin-left:calc(var(--w) * var(--s) / -2);
+  transform-origin:50% calc(12px - var(--t) * var(--s));
   animation:sway 6s ease-in-out infinite alternate; }
 .fb::before{ content:""; position:absolute; left:50%; transform:translateX(-50%);
-  top:calc(12px - var(--t)); width:1.6px; height:calc(var(--t) - 12px);
+  top:calc(12px - var(--t) * var(--s)); width:1.6px; height:calc(var(--t) * var(--s) - 12px);
   background:#e2c078; opacity:.5; }
 .fb img{ display:block; width:100%; transform:scaleY(-1); opacity:.9;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,.22)); }
@@ -640,7 +641,7 @@ body:not(.en) .foot-event .fe-date{ font-family:var(--bng); }
   .cap-icon{ height:66px; }
   .cap-icon.cap-mukut{ height:52px; }
   .chakra{ width:66vw; opacity:.22; }
-  .festoon{ transform:scale(.72); transform-origin:top center; }
+  .festoon{ --s:.56; height:150px; }
   .intro-frame{ padding:44px 26px; }
   body:not(.en) .lineage p{ grid-template-columns:80px 1fr; font-size:.96rem; }
   .event-card{ width:100%; max-width:420px; }
