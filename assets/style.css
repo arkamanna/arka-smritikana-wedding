@@ -138,6 +138,22 @@ body::before{
 .corner.bl{ bottom:-2px; left:-2px; transform:scaleY(-1); }
 .corner.br{ bottom:-2px; right:-2px; transform:scale(-1); }
 
+/* ============ BACKGROUND MOTIFS (gold chakras + hanging bulbs) ============ */
+.bg-decor{ position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.chakra-wrap{ position:absolute; top:50%; transform:translateY(-50%); }
+.chakra-wrap.left{ left:-10%; }
+.chakra-wrap.right{ right:-10%; transform:translateY(-50%) scaleX(-1); }
+.chakra{ display:block; height:min(72vh,560px); width:auto; opacity:.40;
+  animation:spin 140s linear infinite; }
+.chakra-wrap.right .chakra{ animation-direction:reverse; }
+.bulbs{ position:absolute; top:-6px; width:min(30vw,175px); opacity:.55;
+  transform-origin:top center; }
+.bulbs-left{ left:4%; animation:sway 6s ease-in-out infinite alternate; }
+.bulbs-right{ right:4%; animation:sway 7.5s ease-in-out infinite alternate; }
+@keyframes sway{ from{ transform:rotate(-3.5deg); } to{ transform:rotate(3.5deg); } }
+/* old CSS bulbs replaced by the gold hanging-bulb motif */
+.hanging-lights{ display:none; }
+
 /* ============ PETALS ============ */
 .petals{ position:fixed; inset:0; pointer-events:none; z-index:30; overflow:hidden; }
 .petal{ position:absolute; top:-8vh; will-change:transform;
@@ -608,6 +624,8 @@ body:not(.en) .foot-event .fe-date{ font-family:var(--bng); }
   .person-photo{ width:175px; height:175px; }
   .cap-icon{ height:66px; }
   .cap-icon.cap-mukut{ height:52px; }
+  .chakra{ height:44vh; opacity:.26; }
+  .bulbs{ width:26vw; opacity:.42; }
   .intro-frame{ padding:44px 26px; }
   body:not(.en) .lineage p{ grid-template-columns:80px 1fr; font-size:.96rem; }
   .event-card{ width:100%; max-width:420px; }
