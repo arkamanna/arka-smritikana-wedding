@@ -315,7 +315,8 @@
 
   /* ---- Cross-page persistence: music continues across the index/bengali/english pages ---- */
   const LS = (() => { try { return window.localStorage; } catch (e) { return null; } })();
-  const getFlag = () => LS && LS.getItem("bgm_on") === "1";
+  // default ON unless the user has explicitly paused it
+  const wantMusic = () => (LS ? LS.getItem("bgm_on") !== "0" : true);
   function saveState() {
     if (!LS) return;
     try {
@@ -371,23 +372,15 @@
   // keep the saved position fresh while playing
   setInterval(() => { if (playing) saveState(); }, 2000);
 
-  // If music was on when leaving another page, resume here (once allowed).
-  if (getFlag() && musicBtn) {
-    startMusic(true);                       // try immediately (may be autoplay-blocked)
-    const kick = () => { if (!playing) startMusic(true); };
-    window.addEventListener("pointerdown", kick, { once: true });
-    window.addEventListener("keydown", kick, { once: true });
-  }
-
-  // On the landing/chooser page, begin music on the first interaction so it
-  // plays from the very start and carries over to the following pages.
-  if (document.body.classList.contains("chooser") && musicBtn) {
-    const startOnce = () => {
-      if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // remember intent across navigation
-      if (!playing) startMusic();
-    };
-    window.addEventListener("pointerdown", startOnce, { once: true });
-    window.addEventListener("keydown", startOnce, { once: true });
+  // Autoplay by default (from the index and every page), and carry it through.
+  if (musicBtn && wantMusic()) {
+    if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // remember intent across navigation
+    startMusic(true);                       // attempt autoplay (may be blocked by the browser)
+    // If autoplay was blocked, start on the very first user interaction.
+    const kick = () => { if (!playing && wantMusic()) startMusic(true); };
+    ["pointerdown", "keydown", "touchstart", "scroll"].forEach((ev) =>
+      window.addEventListener(ev, kick, { once: true, passive: true })
+    );
   }
 
   /* ---- Pause when the page is hidden (app switch / tab change), resume on return ---- */
@@ -412,7 +405,7 @@
     if (document.hidden) {
       if (playing) pauseForHide();
       else saveState();
-    } else if (playing || getFlag()) {
+    } else if (playing || wantMusic()) {
       if (playing) resumeAfterHide();
       else startMusic(true);
     }
