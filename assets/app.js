@@ -409,11 +409,9 @@
     }, 50);
   }
 
-  /* ---- Music on/off intent — persist ONLY the user's explicit choice ---- */
-  const LS = (() => { try { return window.localStorage; } catch (e) { return null; } })();
-  const wantMusic = () => (LS ? LS.getItem("bgm_on") !== "0" : true);
-  const rememberOn = (on) => { if (LS) { try { LS.setItem("bgm_on", on ? "1" : "0"); } catch (e) {} } };
+  /* ---- Music always starts fresh on every load (preference is NOT remembered) ---- */
   let userInteracted = false;
+  let userStopped = false; // session-only: set when the user pauses via the vinyl
 
   function startMusic() {
     if (playing || !musicBtn) return;
@@ -453,21 +451,21 @@
   if (musicBtn) {
     musicBtn.addEventListener("click", () => {
       userInteracted = true;
-      if (playing) { rememberOn(false); stopMusic(); }
-      else { rememberOn(true); startMusic(); }
+      if (playing) { userStopped = true; stopMusic(); }
+      else { userStopped = false; startMusic(); }
     });
   }
 
-  /* Autoplay: try UNMUTED first (works on revisits via browser media engagement);
-     if blocked, spin the record muted and bring the sound in on the first user
-     interaction. Listeners are persistent (not once) and are NOT gated by any
-     auto-saved state, so a revisit reliably starts on the first tap/click/scroll. */
+  /* Autoplay every load: try UNMUTED first (works on revisits via browser media
+     engagement); if blocked, spin the record muted and bring the sound in on the
+     first user interaction. Preference is never remembered — only an in-session
+     pause via the vinyl stops it (until the next reload). */
   if (musicBtn && useFile && bgAudio) {
     const kEvents = ["pointerdown", "touchstart", "click", "keydown", "scroll"];
     function removeKick() { kEvents.forEach((ev) => window.removeEventListener(ev, kick, true)); }
     function kick(e) {
       if (playing) { removeKick(); return; }
-      if (!wantMusic()) return; // user explicitly turned it off — respect that
+      if (userStopped) return; // paused this session via the vinyl — respect that
       if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
       userInteracted = true;
       bgAudio.muted = false;
@@ -482,21 +480,19 @@
       if (playing) removeKick();
     }
 
-    if (wantMusic()) {
-      // 1) Attempt to play WITH sound immediately.
-      bgAudio.muted = false;
-      bgAudio.volume = TARGET_VOL;
-      const p = bgAudio.play();
-      if (p && p.then) {
-        p.then(() => { playing = true; musicBtn.classList.add("playing"); })
-         .catch(() => {
-           // 2) Blocked with sound → spin muted and wait for the first interaction.
-           bgAudio.muted = true;
-           bgAudio.play().then(() => musicBtn.classList.add("playing")).catch(() => {});
-         });
-      }
-      kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
+    // 1) Attempt to play WITH sound immediately.
+    bgAudio.muted = false;
+    bgAudio.volume = TARGET_VOL;
+    const p = bgAudio.play();
+    if (p && p.then) {
+      p.then(() => { playing = true; musicBtn.classList.add("playing"); })
+       .catch(() => {
+         // 2) Blocked with sound → spin muted and wait for the first interaction.
+         bgAudio.muted = true;
+         bgAudio.play().then(() => musicBtn.classList.add("playing")).catch(() => {});
+       });
     }
+    kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
   }
 
   /* ---- Pause when the page is hidden, resume on return (no state writes) ---- */
@@ -521,7 +517,7 @@
       if (playing) pauseForHide();
     } else if (playing) {
       resumeAfterHide();
-    } else if (wantMusic() && userInteracted) {
+    } else if (!userStopped && userInteracted) {
       startMusic();
     }
   });
