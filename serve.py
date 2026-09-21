@@ -11,8 +11,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
     def end_headers(self):
-        # Never let calendar subscriptions serve a stale cached file
-        if self.path.endswith(".ics"):
+        # Never serve stale scripts/styles/calendar during development, so every
+        # page (English & Bengali) always runs the latest app.js logic.
+        if self.path.endswith((".ics", ".js", ".css", ".html")):
             self.send_header("Cache-Control", "no-store, must-revalidate")
         super().end_headers()
 
