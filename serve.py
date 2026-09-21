@@ -13,7 +13,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         # Never serve stale scripts/styles/calendar during development, so every
         # page (English & Bengali) always runs the latest app.js logic.
-        if self.path.endswith((".ics", ".js", ".css", ".html")):
+        if self.path.split("?")[0].endswith((".ics", ".js", ".css", ".html", ".mp3")):
             self.send_header("Cache-Control", "no-store, must-revalidate")
         super().end_headers()
 
