@@ -14,6 +14,25 @@
     if (au) { try { au.pause(); au.muted = true; } catch (e) {} }
   }
 
+  /* ---------- Add to Calendar (works inside the iframe shell too) ---------- */
+  document.querySelectorAll("[data-ics]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      // Resolve the .ics to an absolute URL relative to this document
+      const url = new URL(el.getAttribute("data-ics"), document.baseURI).href;
+      // Inside the iframe shell, a same-frame download can be swallowed and
+      // iOS/Android need a top-level navigation to hand off to the Calendar app.
+      if (embedded) {
+        e.preventDefault();
+        try {
+          window.open(url, "_blank");
+        } catch (err) {
+          if (window.top) window.top.location.href = url;
+        }
+      }
+      // When opened directly (not embedded), the native download/open works.
+    });
+  });
+
   /* ---------- Intro overlay ---------- */
   const intro = document.getElementById("intro");
   const openBtn = document.getElementById("openBtn");

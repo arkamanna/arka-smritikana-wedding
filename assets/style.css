@@ -562,6 +562,26 @@ body.chooser{ display:flex; align-items:center; justify-content:center; min-heig
 .cb-sub{ font-family:var(--serif-en); font-size:.9rem; opacity:.85; letter-spacing:.5px; }
 .choose-btn{ border:none; cursor:pointer; font-family:inherit; }
 
+/* ---- Add to Calendar button ---- */
+.cal-wrap{ text-align:center; margin:34px auto 4px; }
+.cal-btn{ display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+  padding:13px 26px; border-radius:40px; text-decoration:none;
+  color:var(--maroon-deep); font-weight:700; font-size:1.05rem;
+  background:linear-gradient(180deg,#f6dd97,#e2c078 60%,#caa353);
+  border:1px solid #b98f43;
+  box-shadow:0 6px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.55);
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+.cal-btn:hover{ transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.6);
+  filter:brightness(1.03); }
+.cal-btn:active{ transform:translateY(0); }
+.cal-ico{ font-size:1.25rem; line-height:1; }
+.cal-hint{ margin:12px 0 0; color:var(--gold); opacity:.85; font-size:.92rem; letter-spacing:.3px; }
+@media (max-width:560px){
+  .cal-btn{ font-size:.98rem; padding:12px 20px; }
+  .cal-hint{ font-size:.82rem; }
+}
+
 /* ---- Shell iframe viewer (keeps music playing across language switches) ---- */
 .viewer{ position:fixed; inset:0; width:100%; height:100%; border:none; display:none; z-index:50;
   background:var(--maroon-deep); }
