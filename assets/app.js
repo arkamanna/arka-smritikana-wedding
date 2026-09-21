@@ -15,14 +15,15 @@
   }
 
   /* ---------- Add to Calendar (platform-aware) ----------
-     Android Chrome always downloads .ics and won't open Google Calendar, so on
-     Android we use Google Calendar "add event" links (one per event): first tap
-     adds the Wedding, second tap adds the Reception. Everywhere else we use the
-     all-in-one .ics which adds BOTH at once (iOS/macOS open Calendar directly). */
+     Desktop browsers (Windows/Mac Chrome/Edge) and Android Chrome DOWNLOAD .ics
+     files instead of adding them, so on all of those we use Google Calendar
+     "add event" links (one per event): first tap adds the Wedding, second tap
+     adds the Reception — no download. Only iOS keeps the all-in-one .ics, which
+     opens Apple Calendar and adds BOTH events at once directly. */
   const ua = navigator.userAgent || "";
-  const isAndroid = /Android/i.test(ua);
   const isIOS = /iP(hone|ad|od)/i.test(ua) ||
     (navigator.platform === "MacIntel" && (navigator.maxTouchPoints || 0) > 1);
+  const useGoogle = !isIOS; // everyone except iOS uses the Google Calendar flow
   const isEn = document.body.classList.contains("en");
 
   const gcal = (text, dates, details, loc) =>
@@ -64,7 +65,7 @@
     const orig = txt ? txt.textContent : "";
     let step = 0;
     el.addEventListener("click", (e) => {
-      if (isAndroid) {
+      if (useGoogle) {
         e.preventDefault();
         if (step === 0) {
           window.open(GCAL_WED, "_blank");
@@ -79,7 +80,7 @@
         }
         return;
       }
-      // iOS / macOS / desktop: the .ics adds both events
+      // iOS: the .ics opens Apple Calendar and adds both events at once
       if (openIcs(el) === false) e.preventDefault();
     });
   });
