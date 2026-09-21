@@ -125,6 +125,79 @@ body::before{
 .open-btn:hover{ transform:translateY(-3px) scale(1.03); box-shadow:0 16px 34px rgba(226,192,120,.5); }
 @keyframes pulse{ 50%{ transform:scale(1.04); } }
 
+/* ============ ENVELOPE OPEN ANIMATION (intro) ============ */
+.envelope{
+  position:relative; margin:36px auto 40px; border:none; background:transparent;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  width:min(76vw,300px); height:min(50vw,198px);
+  perspective:1400px; animation:envFloat 3.8s ease-in-out infinite;
+}
+.envelope > span{ position:absolute; }
+.envelope:focus-visible{ outline:none; }
+.envelope:hover .env-seal{ transform:translate(-50%,-50%) scale(1.06); }
+
+/* Letter that rises out of the top */
+.env-letter{
+  left:9%; right:9%; top:12%; bottom:12%;
+  background:linear-gradient(180deg,#fffdf7,#f7ecd4);
+  border-radius:6px; z-index:2; overflow:hidden;
+  display:flex; flex-direction:column; gap:11px; padding:20px 20px 16px;
+  box-shadow:0 8px 18px rgba(0,0,0,.20);
+  transform:translateY(0);
+  transition:transform 1s cubic-bezier(.2,.85,.25,1) .5s;
+}
+.env-letter b{ text-align:center; font-family:var(--script); color:var(--maroon);
+  font-size:1.4rem; line-height:1; margin-bottom:3px; }
+.env-line{ height:6px; border-radius:3px; background:rgba(139,0,32,.15); }
+.env-line.short{ width:55%; margin:0 auto; }
+.env-cta{ margin-top:auto; text-align:center; color:var(--maroon-deep);
+  font-family:var(--bng-head); font-weight:700; letter-spacing:.4px; font-size:.9rem; }
+
+/* Front pocket (hides the letter until it rises) */
+.env-front{
+  inset:0; z-index:3; border-radius:11px;
+  background:linear-gradient(158deg,#f3d692,#e2c078 55%,#c9a24f);
+  box-shadow:0 20px 44px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.env-front::after{ content:""; position:absolute; inset:0; border-radius:11px;
+  background:linear-gradient(160deg,#ecca80,#d7b665);
+  clip-path:polygon(0 100%, 50% 33%, 100% 100%); opacity:.6; }
+
+/* Top flap that folds open */
+.env-flap{
+  left:0; right:0; top:0; height:60%; z-index:4; transform-origin:50% 0;
+  background:linear-gradient(160deg,#f7dd97,#dcb968);
+  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  filter:drop-shadow(0 5px 8px rgba(0,0,0,.28));
+  transition:transform .75s cubic-bezier(.6,.02,.25,1), z-index 0s linear .38s;
+}
+.env-seal{
+  position:absolute; left:50%; top:60%; transform:translate(-50%,-50%);
+  width:46px; height:46px; border-radius:50%;
+  background:radial-gradient(circle at 40% 34%, #b23349, #7a1327 70%);
+  color:var(--gold-bright); display:flex; align-items:center; justify-content:center;
+  font-size:1.35rem; z-index:5; transition:transform .3s ease, opacity .3s ease;
+  box-shadow:0 3px 8px rgba(0,0,0,.4), inset 0 1px 2px rgba(255,255,255,.35);
+}
+.env-hint{
+  left:0; right:0; bottom:-30px; text-align:center; color:var(--gold-bright);
+  font-family:var(--bng-head); letter-spacing:1.5px; font-size:.85rem; opacity:.9;
+  animation:pulse 2.4s ease-in-out infinite; transition:opacity .3s ease;
+}
+
+/* --- Opening state --- */
+.envelope.opening{ animation:none; }
+.envelope.opening .env-flap{ transform:rotateX(-172deg); z-index:1; }
+.envelope.opening .env-seal{ opacity:0; }
+.envelope.opening .env-letter{ transform:translateY(-72%); }
+.envelope.opening .env-hint{ opacity:0; }
+
+@keyframes envFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
+@media (prefers-reduced-motion: reduce){
+  .envelope{ animation:none; }
+  .env-letter, .env-flap{ transition:none; }
+}
+
 /* ============ ORNATE FIXED FRAME ============ */
 .ornate-frame{ position:fixed; inset:14px; pointer-events:none; z-index:40;
   border:1.5px solid rgba(226,192,120,.35); border-radius:4px; }

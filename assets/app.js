@@ -108,7 +108,14 @@
   }
   if (intro) {
     document.body.style.overflow = "hidden";
-    if (openBtn) openBtn.addEventListener("click", dismissIntro);
+    if (openBtn) {
+      openBtn.addEventListener("click", () => {
+        if (openBtn.classList.contains("opening")) return;
+        openBtn.classList.add("opening");
+        startMusic(); // gesture unlocks audio right away
+        setTimeout(dismissIntro, reduced ? 250 : 1250);
+      });
+    }
     if (location.search.includes("preview") || location.hash === "#open") {
       intro.classList.add("hide");
       document.body.style.overflow = "";
