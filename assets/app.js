@@ -60,25 +60,52 @@
     return false;
   }
 
+  // Remember where the reader was, so returning to the invitation (after adding
+  // an event / switching tabs) lands exactly where they left off.
+  try {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    const SK = "scrollpos_" + location.pathname;
+    const restore = () => {
+      const s = sessionStorage.getItem(SK);
+      if (s) window.scrollTo(0, parseInt(s, 10) || 0);
+    };
+    restore();
+    window.addEventListener("load", restore);
+    window.addEventListener("pageshow", restore);
+    window.addEventListener("scroll", () => {
+      try { sessionStorage.setItem(SK, String(window.scrollY || window.pageYOffset || 0)); } catch (e) {}
+    }, { passive: true });
+  } catch (e) {}
+
+  // Open a URL in a new tab via a link-click (browsers rarely block these)
+  function openViaLink(url) {
+    const a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener"; a.style.display = "none";
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { try { a.remove(); } catch (e) {} }, 1200);
+  }
+
   document.querySelectorAll("[data-ics]").forEach((el) => {
     const txt = el.querySelector(".cal-txt");
     const orig = txt ? txt.textContent : "";
-    let pending = false; // true only if the 2nd popup got blocked
+    let pending = false; // true only if the Reception popup got blocked
     el.addEventListener("click", (e) => {
+      try { sessionStorage.setItem("scrollpos_" + location.pathname, String(window.scrollY || 0)); } catch (err) {}
       if (useGoogle) {
         e.preventDefault();
         if (pending) {                       // finish the blocked 2nd event
-          window.open(GCAL_REC, "_blank");
+          openViaLink(GCAL_REC);
           pending = false;
           if (txt) txt.textContent = orig;
           el.classList.remove("cal-step2");
           return;
         }
-        // One click → open BOTH events (two Google Calendar tabs)
-        window.open(GCAL_WED, "_blank");
+        // One click → open BOTH events. Wedding via link-click (reliable),
+        // Reception via popup (detectable so we can fall back if blocked).
         const w2 = window.open(GCAL_REC, "_blank");
+        openViaLink(GCAL_WED);
         if (!w2) {
-          // browser blocked the 2nd popup — offer it on the next tap
+          // Reception popup was blocked — offer it as a one-tap follow-up
           pending = true;
           if (txt) txt.textContent = RECEPTION_LABEL;
           el.classList.add("cal-step2");
