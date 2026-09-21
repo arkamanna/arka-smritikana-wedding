@@ -129,8 +129,8 @@ body::before{
 .envelope{
   position:relative; margin:30px auto 8px; border:none; background:transparent;
   cursor:pointer; -webkit-tap-highlight-color:transparent;
-  width:min(62vw,224px); height:min(40vw,142px);
-  perspective:1100px; animation:envFloat 3.8s ease-in-out infinite;
+  width:min(38vw,135px); height:min(24vw,85px);
+  perspective:800px; animation:envFloat 3.8s ease-in-out infinite;
 }
 .envelope > span{ position:absolute; }
 .envelope:focus-visible{ outline:none; }
@@ -173,17 +173,17 @@ body::before{
 }
 .env-seal{
   position:absolute; left:50%; top:56%; transform:translate(-50%,-50%);
-  width:36px; height:36px; border-radius:50%;
+  width:23px; height:23px; border-radius:50%;
   background:radial-gradient(circle at 40% 34%, #b23349, #7a1327 70%);
   color:var(--gold-bright); display:flex; align-items:center; justify-content:center;
-  font-size:1.05rem; z-index:5; transition:transform .3s ease, opacity .3s ease;
+  font-size:.72rem; z-index:5; transition:transform .3s ease, opacity .3s ease;
   box-shadow:0 3px 8px rgba(0,0,0,.4), inset 0 1px 2px rgba(255,255,255,.35);
 }
 /* "Open Invitation" label on the lower front of the envelope */
 .env-label{
   left:0; right:0; bottom:11%; text-align:center; z-index:6; pointer-events:none;
   color:var(--maroon-deep); font-family:var(--bng-head); font-weight:700;
-  letter-spacing:.5px; font-size:clamp(.78rem,3.3vw,.92rem);
+  letter-spacing:.2px; font-size:clamp(.52rem,2.1vw,.62rem);
   transition:opacity .3s ease;
 }
 
@@ -220,7 +220,7 @@ body::before{
 .chakra-wrap.right{ right:0; top:62%; transform:translate(50%,-50%) scaleX(-1); }
 .chakra{ display:block; width:min(54vw,470px); height:auto; opacity:.08;
   animation:spin 40s linear infinite; }
-.chakra-wrap.right .chakra{ animation-direction:reverse; }
+.chakra-wrap.right .chakra{ animation-direction:normal; }
 
 /* Hanging festoon of flower bulbs from a wire */
 .festoon{ --s:1; position:fixed; top:0; left:0; right:0; height:210px; z-index:1; pointer-events:none; }
