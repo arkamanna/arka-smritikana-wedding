@@ -63,20 +63,25 @@
   document.querySelectorAll("[data-ics]").forEach((el) => {
     const txt = el.querySelector(".cal-txt");
     const orig = txt ? txt.textContent : "";
-    let step = 0;
+    let pending = false; // true only if the 2nd popup got blocked
     el.addEventListener("click", (e) => {
       if (useGoogle) {
         e.preventDefault();
-        if (step === 0) {
-          window.open(GCAL_WED, "_blank");
-          step = 1;
-          if (txt) txt.textContent = RECEPTION_LABEL;
-          el.classList.add("cal-step2");
-        } else {
+        if (pending) {                       // finish the blocked 2nd event
           window.open(GCAL_REC, "_blank");
-          step = 0;
+          pending = false;
           if (txt) txt.textContent = orig;
           el.classList.remove("cal-step2");
+          return;
+        }
+        // One click → open BOTH events (two Google Calendar tabs)
+        window.open(GCAL_WED, "_blank");
+        const w2 = window.open(GCAL_REC, "_blank");
+        if (!w2) {
+          // browser blocked the 2nd popup — offer it on the next tap
+          pending = true;
+          if (txt) txt.textContent = RECEPTION_LABEL;
+          el.classList.add("cal-step2");
         }
         return;
       }
