@@ -49,11 +49,14 @@
     // iframe are allowed. Desktop/Windows -> download; iOS -> open Calendar.
     try {
       const a = document.createElement("a");
-      a.href = url; a.style.display = "none";
+      a.style.display = "none";
       if (isIOS) {
+        a.href = url;
         a.setAttribute("target", "_top"); // Safari intercepts .ics -> Calendar
       } else {
-        a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
+        // Desktop (Win/Mac, Chrome/Edge/Safari/Firefox): hand off to the OS
+        // calendar app directly via webcal:// so nothing is downloaded.
+        a.href = url.replace(/^https?:/i, "webcal:");
       }
       document.body.appendChild(a); a.click();
       setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
