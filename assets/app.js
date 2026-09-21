@@ -409,17 +409,11 @@
     }, 50);
   }
 
-  /* ---- Cross-page persistence: music continues across the index/bengali/english pages ---- */
+  /* ---- Music on/off intent — persist ONLY the user's explicit choice ---- */
   const LS = (() => { try { return window.localStorage; } catch (e) { return null; } })();
-  // default ON unless the user has explicitly paused it
   const wantMusic = () => (LS ? LS.getItem("bgm_on") !== "0" : true);
-  function saveState() {
-    if (!LS) return;
-    try {
-      LS.setItem("bgm_on", playing ? "1" : "0");
-      if (useFile && bgAudio) LS.setItem("bgm_t", String(bgAudio.currentTime || 0));
-    } catch (e) {}
-  }
+  const rememberOn = (on) => { if (LS) { try { LS.setItem("bgm_on", on ? "1" : "0"); } catch (e) {} } };
+  let userInteracted = false;
 
   function startMusic() {
     if (playing || !musicBtn) return;
@@ -432,7 +426,6 @@
           playing = true;
           musicBtn.classList.add("playing");
           fadeAudio(TARGET_VOL);
-          saveState();
         }).catch(() => {
           // autoplay blocked — will start on the next real gesture
           playing = false;
@@ -446,7 +439,6 @@
     }
     playing = true;
     musicBtn.classList.add("playing");
-    saveState();
   }
   function stopMusic() {
     if (!playing) return;
@@ -457,58 +449,58 @@
     }
     playing = false;
     musicBtn.classList.remove("playing");
-    saveState();
   }
-  if (musicBtn) musicBtn.addEventListener("click", () => { userInteracted = true; playing ? stopMusic() : startMusic(); });
+  if (musicBtn) {
+    musicBtn.addEventListener("click", () => {
+      userInteracted = true;
+      if (playing) { rememberOn(false); stopMusic(); }
+      else { rememberOn(true); startMusic(); }
+    });
+  }
 
-  // keep the saved position fresh while playing
-  setInterval(() => { if (playing) saveState(); }, 2000);
-
-  // Autoplay by default: start MUTED on load (record spins immediately),
-  // then UNMUTE with a fade on the first user interaction.
-  let userInteracted = false;
-  if (musicBtn && wantMusic()) {
-    if (LS) { try { LS.setItem("bgm_on", "1"); } catch (e) {} } // default ON
-
-    // 1) Muted autoplay so the record starts spinning right away (browsers allow muted).
-    if (useFile && bgAudio) {
-      bgAudio.muted = true;
-      bgAudio.volume = TARGET_VOL;
-      const p = bgAudio.play();
-      if (p && p.then) p.then(() => { musicBtn.classList.add("playing"); }).catch(() => {});
-    }
-
-    // 2) The first real interaction anywhere brings the actual sound in. This is the
-    //    reliable path on Chrome/Safari/mobile which block autoplay WITH sound.
+  /* Autoplay: try UNMUTED first (works on revisits via browser media engagement);
+     if blocked, spin the record muted and bring the sound in on the first user
+     interaction. Listeners are persistent (not once) and are NOT gated by any
+     auto-saved state, so a revisit reliably starts on the first tap/click/scroll. */
+  if (musicBtn && useFile && bgAudio) {
     const kEvents = ["pointerdown", "touchstart", "click", "keydown", "scroll"];
     function removeKick() { kEvents.forEach((ev) => window.removeEventListener(ev, kick, true)); }
     function kick(e) {
       if (playing) { removeKick(); return; }
-      if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return; // toggle handles itself
-      if (!wantMusic()) { removeKick(); return; }
+      if (!wantMusic()) return; // user explicitly turned it off — respect that
+      if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
       userInteracted = true;
-      if (useFile && bgAudio) {
-        bgAudio.muted = false;
-        if (bgAudio.paused) {
-          startMusic();               // muted autoplay was blocked → start now
-        } else {
-          bgAudio.volume = 0;         // already spinning muted → fade the sound in
-          playing = true;
-          musicBtn.classList.add("playing");
-          fadeAudio(TARGET_VOL);
-          saveState();
-        }
-      } else {
+      bgAudio.muted = false;
+      if (bgAudio.paused) {
         startMusic();
+      } else {
+        bgAudio.volume = 0;               // already spinning muted → fade sound in
+        playing = true;
+        musicBtn.classList.add("playing");
+        fadeAudio(TARGET_VOL);
       }
       if (playing) removeKick();
     }
-    kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
+
+    if (wantMusic()) {
+      // 1) Attempt to play WITH sound immediately.
+      bgAudio.muted = false;
+      bgAudio.volume = TARGET_VOL;
+      const p = bgAudio.play();
+      if (p && p.then) {
+        p.then(() => { playing = true; musicBtn.classList.add("playing"); })
+         .catch(() => {
+           // 2) Blocked with sound → spin muted and wait for the first interaction.
+           bgAudio.muted = true;
+           bgAudio.play().then(() => musicBtn.classList.add("playing")).catch(() => {});
+         });
+      }
+      kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
+    }
   }
 
-  /* ---- Pause when the page is hidden (app switch / tab change), resume on return ---- */
+  /* ---- Pause when the page is hidden, resume on return (no state writes) ---- */
   function pauseForHide() {
-    saveState();
     if (useFile && bgAudio) {
       bgAudio.pause();
     } else if (audioCtx) {
@@ -533,6 +525,5 @@
       startMusic();
     }
   });
-  // save position and pause on navigation/close
-  window.addEventListener("pagehide", () => { saveState(); if (playing) pauseForHide(); });
+  window.addEventListener("pagehide", () => { if (playing) pauseForHide(); });
 })();
