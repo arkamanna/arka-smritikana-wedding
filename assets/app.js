@@ -50,11 +50,12 @@
     try {
       const a = document.createElement("a");
       a.style.display = "none";
-      a.href = url;
       if (isIOS) {
+        a.href = url;
         a.setAttribute("target", "_top"); // Safari intercepts .ics -> Calendar
       } else {
-        a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
+        // Desktop: open the OS Calendar app via webcal:// (Subscribe -> adds both events)
+        a.href = url.replace(/^https?:/i, "webcal:");
       }
       document.body.appendChild(a); a.click();
       setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);

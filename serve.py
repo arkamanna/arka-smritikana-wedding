@@ -6,7 +6,11 @@ import http.server, socketserver
 PORT = 8080
 
 class Handler(http.server.SimpleHTTPRequestHandler):
-    pass
+    def end_headers(self):
+        # Never let calendar subscriptions serve a stale cached file
+        if self.path.endswith(".ics"):
+            self.send_header("Cache-Control", "no-store, must-revalidate")
+        super().end_headers()
 
 # Serve calendar files with the correct MIME type
 Handler.extensions_map[".ics"] = "text/calendar"
