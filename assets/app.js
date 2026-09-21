@@ -113,7 +113,7 @@
         if (openBtn.classList.contains("opening")) return;
         openBtn.classList.add("opening");
         startMusic(); // gesture unlocks audio right away
-        setTimeout(dismissIntro, reduced ? 250 : 1250);
+        setTimeout(dismissIntro, reduced ? 250 : 1450);
       });
     }
     if (location.search.includes("preview") || location.hash === "#open") {
