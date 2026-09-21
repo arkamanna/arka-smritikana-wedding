@@ -21,6 +21,7 @@
      all-in-one .ics which adds BOTH at once (iOS/macOS open Calendar directly). */
   const ua = navigator.userAgent || "";
   const isAndroid = /Android/i.test(ua);
+  const isWindows = /Windows|Win32|Win64|WOW64/i.test(ua);
   const isIOS = /iP(hone|ad|od)/i.test(ua) ||
     (navigator.platform === "MacIntel" && (navigator.maxTouchPoints || 0) > 1);
   const isEn = document.body.classList.contains("en");
@@ -85,7 +86,14 @@
         }
         return;
       }
-      // iOS / macOS / desktop: the .ics adds both events
+      if (isWindows) {
+        // Windows: open both events in two Google Calendar tabs
+        e.preventDefault();
+        window.open(GCAL_WED, "_blank");
+        window.open(GCAL_REC, "_blank");
+        return;
+      }
+      // iOS / macOS: the .ics / webcal adds both events (Mac stays webcal)
       if (openIcs(el) === false) e.preventDefault();
     });
   });
