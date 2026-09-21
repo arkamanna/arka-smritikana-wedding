@@ -563,22 +563,21 @@ body.chooser{ display:flex; align-items:center; justify-content:center; min-heig
 .choose-btn{ border:none; cursor:pointer; font-family:inherit; }
 
 /* ---- Add to Calendar button ---- */
-.cal-wrap{ text-align:center; margin:34px auto 4px; }
+.cal-wrap{ text-align:center; margin:22px auto 2px; }
 .cal-btn{ display:inline-flex; align-items:center; gap:10px; cursor:pointer;
-  padding:13px 26px; border-radius:40px; text-decoration:none;
-  color:var(--maroon-deep); font-weight:700; font-size:1.05rem;
-  background:linear-gradient(180deg,#f6dd97,#e2c078 60%,#caa353);
-  border:1px solid #b98f43;
-  box-shadow:0 6px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.55);
-  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease; }
-.cal-btn:hover{ transform:translateY(-2px);
-  box-shadow:0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.6);
-  filter:brightness(1.03); }
-.cal-btn:active{ transform:translateY(0); }
-.cal-ico{ font-size:1.25rem; line-height:1; }
+  font-family:var(--bng-head); font-weight:600; font-size:1.15rem; text-decoration:none;
+  padding:13px 30px; border-radius:40px;
+  background:transparent; color:var(--gold-bright); border:1.5px solid var(--gold);
+  box-shadow:none; transition:transform .25s ease; }
+body.en .cal-btn{ font-family:var(--clean); font-style:italic; font-weight:700; }
+.cal-btn:hover{ transform:translateY(-3px); }
+.cal-ico{ width:1.15em; height:1.15em; display:inline-block; vertical-align:-.18em;
+  background:var(--gold-bright);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='black' d='M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='black' d='M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z'/%3E%3C/svg%3E") center/contain no-repeat; }
 .cal-hint{ margin:12px 0 0; color:var(--gold); opacity:.85; font-size:.92rem; letter-spacing:.3px; }
 @media (max-width:560px){
-  .cal-btn{ font-size:.98rem; padding:12px 20px; }
+  .cal-btn{ font-size:1.02rem; padding:12px 22px; }
   .cal-hint{ font-size:.82rem; }
 }
 
