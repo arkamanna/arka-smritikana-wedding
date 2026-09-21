@@ -23,8 +23,10 @@ LOCATION:Atithi Inn\, Raghunathpur Road\, Baguiati\, Kolkata 700059
 STATUS:CONFIRMED
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Arka & Smritikana — Wedding tomorrow
-TRIGGER:-P1D
+DESCRIPTION:Arka & Smritikana — Wedding
+TRIGGER:-P2D
+DURATION:P1D
+REPEAT:2
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
@@ -38,8 +40,10 @@ LOCATION:Imperial Banquet\, Mohan Mall (4th Floor)\, 22 Sahid Surya Sen Road\, B
 STATUS:CONFIRMED
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Arka & Smritikana — Reception tomorrow
-TRIGGER:-P1D
+DESCRIPTION:Arka & Smritikana — Reception
+TRIGGER:-P2D
+DURATION:P1D
+REPEAT:2
 END:VALARM
 END:VEVENT
 END:VCALENDAR
