@@ -6,6 +6,10 @@ import http.server, socketserver
 PORT = 8080
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    # HTTP/1.1 with Content-Length keep-alive: Apple Calendar's subscription
+    # client fails on HTTP/1.0 responses that close the connection.
+    protocol_version = "HTTP/1.1"
+
     def end_headers(self):
         # Never let calendar subscriptions serve a stale cached file
         if self.path.endswith(".ics"):
