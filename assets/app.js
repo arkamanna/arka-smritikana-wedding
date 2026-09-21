@@ -14,22 +14,73 @@
     if (au) { try { au.pause(); au.muted = true; } catch (e) {} }
   }
 
-  /* ---------- Add to Calendar (works inside the iframe shell too) ---------- */
+  /* ---------- Add to Calendar (platform-aware) ----------
+     Android Chrome always downloads .ics and won't open Google Calendar, so on
+     Android we use Google Calendar "add event" links (one per event): first tap
+     adds the Wedding, second tap adds the Reception. Everywhere else we use the
+     all-in-one .ics which adds BOTH at once (iOS/macOS open Calendar directly). */
+  const ua = navigator.userAgent || "";
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iP(hone|ad|od)/i.test(ua) ||
+    (navigator.platform === "MacIntel" && (navigator.maxTouchPoints || 0) > 1);
+  const isEn = document.body.classList.contains("en");
+
+  const gcal = (text, dates, details, loc) =>
+    "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+    "&text=" + encodeURIComponent(text) +
+    "&dates=" + dates +
+    "&details=" + encodeURIComponent(details) +
+    "&location=" + encodeURIComponent(loc);
+  const GCAL_WED = gcal("Arka & Smritikana — Wedding",
+    "20261213T133000Z/20261213T173000Z",
+    "Wedding ceremony of Arka Manna & Smritikana Paik. 7:00 PM onwards.",
+    "Atithi Inn, Raghunathpur Road, Baguiati, Kolkata 700059");
+  const GCAL_REC = gcal("Arka & Smritikana — Reception",
+    "20261215T133000Z/20261215T173000Z",
+    "Reception (Bodhu Boron) of Arka Manna & Smritikana Paik. 7:00 PM onwards.",
+    "Imperial Banquet, Mohan Mall (4th Floor), 22 Sahid Surya Sen Road, Berhampore, Murshidabad 742101");
+  const RECEPTION_LABEL = isEn ? "Now add Reception  →" : "এবার বধূবরণ যোগ করুন  →";
+
+  function openIcs(el) {
+    const url = new URL(el.getAttribute("data-ics"), document.baseURI).href;
+    if (!embedded) return true; // let the browser handle the plain link
+    // Inside the iframe shell, click a top-level anchor so it hands off cleanly
+    // (no blank tab). Use download only on non-iOS so iOS still opens Calendar.
+    try {
+      const doc = (window.top && window.top.document) || document;
+      const a = doc.createElement("a");
+      a.href = url; a.style.display = "none";
+      if (!isIOS) a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
+      doc.body.appendChild(a); a.click();
+      setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
+    } catch (e) {
+      window.open(url, "_blank");
+    }
+    return false;
+  }
+
   document.querySelectorAll("[data-ics]").forEach((el) => {
+    const txt = el.querySelector(".cal-txt");
+    const orig = txt ? txt.textContent : "";
+    let step = 0;
     el.addEventListener("click", (e) => {
-      // Resolve the .ics to an absolute URL relative to this document
-      const url = new URL(el.getAttribute("data-ics"), document.baseURI).href;
-      // Inside the iframe shell, a same-frame download can be swallowed and
-      // iOS/Android need a top-level navigation to hand off to the Calendar app.
-      if (embedded) {
+      if (isAndroid) {
         e.preventDefault();
-        try {
-          window.open(url, "_blank");
-        } catch (err) {
-          if (window.top) window.top.location.href = url;
+        if (step === 0) {
+          window.open(GCAL_WED, "_blank");
+          step = 1;
+          if (txt) txt.textContent = RECEPTION_LABEL;
+          el.classList.add("cal-step2");
+        } else {
+          window.open(GCAL_REC, "_blank");
+          step = 0;
+          if (txt) txt.textContent = orig;
+          el.classList.remove("cal-step2");
         }
+        return;
       }
-      // When opened directly (not embedded), the native download/open works.
+      // iOS / macOS / desktop: the .ics adds both events
+      if (openIcs(el) === false) e.preventDefault();
     });
   });
 
