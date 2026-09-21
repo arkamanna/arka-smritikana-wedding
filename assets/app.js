@@ -19,6 +19,13 @@
       window.addEventListener(ev, fwd, { capture: true, passive: true }));
   }
 
+  /* tel:/mailto: links must break out of the iframe or iOS Safari silently
+     blocks them (won't open the dialer). Force them to the top-level context. */
+  document.querySelectorAll('a[href^="tel:"], a[href^="mailto:"]').forEach((a) => {
+    a.setAttribute("target", "_top");
+    a.setAttribute("rel", "noopener");
+  });
+
   /* ---------- Add to Calendar (platform-aware) ----------
      Android Chrome always downloads .ics and won't open Google Calendar, so on
      Android we use Google Calendar "add event" links (one per event): first tap
