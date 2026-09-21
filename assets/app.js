@@ -453,7 +453,15 @@
   function stopMusic() {
     if (!playing) return;
     if (useFile && bgAudio) {
-      fadeAudio(0, () => bgAudio.pause());
+      // iOS Safari ignores programmatic volume, so a fade never reaches 0 and the
+      // pause callback never fires — pause immediately there. Fade elsewhere, but
+      // guarantee a pause afterwards as a safety net.
+      if (isIOS) {
+        try { bgAudio.pause(); } catch (e) {}
+      } else {
+        fadeAudio(0, () => { try { bgAudio.pause(); } catch (e) {} });
+        setTimeout(() => { if (!playing) { try { bgAudio.pause(); } catch (e) {} } }, 1600);
+      }
     } else {
       stopSynth();
     }
