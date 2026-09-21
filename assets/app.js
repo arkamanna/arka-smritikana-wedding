@@ -12,6 +12,11 @@
     if (mb) mb.style.display = "none";
     const au = document.getElementById("bgAudio");
     if (au) { try { au.pause(); au.muted = true; } catch (e) {} }
+    // Interactions inside this iframe never reach the parent window that owns the
+    // audio, so forward every gesture up to the shell to start/unmute the music.
+    const fwd = () => { try { window.parent.postMessage({ __bgm: "kick" }, "*"); } catch (e) {} };
+    ["pointerdown", "touchstart", "click", "keydown", "scroll"].forEach((ev) =>
+      window.addEventListener(ev, fwd, { capture: true, passive: true }));
   }
 
   /* ---------- Add to Calendar (platform-aware) ----------
@@ -462,11 +467,14 @@
      pause via the vinyl stops it (until the next reload). */
   if (musicBtn && useFile && bgAudio) {
     const kEvents = ["pointerdown", "touchstart", "click", "keydown", "scroll"];
-    function removeKick() { kEvents.forEach((ev) => window.removeEventListener(ev, kick, true)); }
-    function kick(e) {
-      if (playing) { removeKick(); return; }
-      if (userStopped) return; // paused this session via the vinyl — respect that
-      if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
+    function removeKick() {
+      kEvents.forEach((ev) => window.removeEventListener(ev, kick, true));
+      window.removeEventListener("message", onMsg);
+    }
+    // Start / unmute the music (called by direct gestures AND by gestures
+    // forwarded from the iframe via postMessage).
+    function activate() {
+      if (playing || userStopped) return;
       userInteracted = true;
       bgAudio.muted = false;
       if (bgAudio.paused) {
@@ -479,8 +487,13 @@
       }
       if (playing) removeKick();
     }
+    function kick(e) {
+      if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
+      activate();
+    }
+    function onMsg(ev) { if (ev && ev.data && ev.data.__bgm === "kick") activate(); }
 
-    // 1) Attempt to play WITH sound immediately.
+    // 1) Attempt to play WITH sound immediately (works on revisits via media engagement).
     bgAudio.muted = false;
     bgAudio.volume = TARGET_VOL;
     const p = bgAudio.play();
@@ -493,6 +506,7 @@
        });
     }
     kEvents.forEach((ev) => window.addEventListener(ev, kick, { capture: true, passive: true }));
+    window.addEventListener("message", onMsg); // gestures forwarded from the iframe
   }
 
   /* ---- Pause when the page is hidden, resume on return (no state writes) ---- */
