@@ -44,19 +44,17 @@
 
   function openIcs(el) {
     const url = new URL(el.getAttribute("data-ics"), document.baseURI).href;
-    if (!embedded) return true; // plain link works when opened directly
-    // Inside the iframe shell: trigger from THIS document so the user gesture is
-    // preserved (cross-document clicks get blocked). Downloads from a same-origin
-    // iframe are allowed. Desktop/Windows -> download; iOS -> open Calendar.
+    // Trigger from THIS document (works whether embedded in the shell or opened
+    // directly) so the user gesture is preserved. Mac/desktop -> webcal:// opens
+    // the Calendar app; iOS -> Safari intercepts the .ics and opens Calendar.
     try {
       const a = document.createElement("a");
       a.style.display = "none";
       if (isIOS) {
         a.href = url;
-        a.setAttribute("target", "_top"); // Safari intercepts .ics -> Calendar
+        a.setAttribute("target", "_top");
       } else {
-        // Desktop: open the OS Calendar app automatically via webcal://
-        a.href = url.replace(/^https?:/i, "webcal:");
+        a.href = url.replace(/^https?:/i, "webcal:"); // Mac/desktop -> Calendar app
       }
       document.body.appendChild(a); a.click();
       setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
