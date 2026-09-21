@@ -78,7 +78,6 @@
     function openView(src) {
       viewer.src = src;
       document.body.classList.add("viewing");
-      try { sessionStorage.setItem("view", src); } catch (e) {}
     }
     document.querySelectorAll(".choose-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -87,9 +86,7 @@
     });
     // deep link: index.html#bengali or #english opens directly
     var h = (location.hash || "").replace("#", "");
-    var saved = null; try { saved = sessionStorage.getItem("view"); } catch (e) {}
     if (h === "bengali" || h === "english") openView(h + ".html");
-    else if (saved === "bengali.html" || saved === "english.html") openView(saved);
   })();
 </script>
 </body>
