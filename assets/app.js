@@ -15,15 +15,14 @@
   }
 
   /* ---------- Add to Calendar (platform-aware) ----------
-     Desktop browsers (Windows/Mac Chrome/Edge) and Android Chrome DOWNLOAD .ics
-     files instead of adding them, so on all of those we use Google Calendar
-     "add event" links (one per event): first tap adds the Wedding, second tap
-     adds the Reception — no download. Only iOS keeps the all-in-one .ics, which
-     opens Apple Calendar and adds BOTH events at once directly. */
+     Android Chrome always downloads .ics and won't open Google Calendar, so on
+     Android we use Google Calendar "add event" links (one per event): first tap
+     adds the Wedding, second tap adds the Reception. Everywhere else we use the
+     all-in-one .ics which adds BOTH at once (iOS/macOS open Calendar directly). */
   const ua = navigator.userAgent || "";
+  const isAndroid = /Android/i.test(ua);
   const isIOS = /iP(hone|ad|od)/i.test(ua) ||
     (navigator.platform === "MacIntel" && (navigator.maxTouchPoints || 0) > 1);
-  const useGoogle = !isIOS; // everyone except iOS uses the Google Calendar flow
   const isEn = document.body.classList.contains("en");
 
   const gcal = (text, dates, details, loc) =>
@@ -44,15 +43,19 @@
 
   function openIcs(el) {
     const url = new URL(el.getAttribute("data-ics"), document.baseURI).href;
-    if (!embedded) return true; // let the browser handle the plain link
-    // Inside the iframe shell, click a top-level anchor so it hands off cleanly
-    // (no blank tab). Use download only on non-iOS so iOS still opens Calendar.
+    if (!embedded) return true; // plain link works when opened directly
+    // Inside the iframe shell: trigger from THIS document so the user gesture is
+    // preserved (cross-document clicks get blocked). Downloads from a same-origin
+    // iframe are allowed. Desktop/Windows -> download; iOS -> open Calendar.
     try {
-      const doc = (window.top && window.top.document) || document;
-      const a = doc.createElement("a");
+      const a = document.createElement("a");
       a.href = url; a.style.display = "none";
-      if (!isIOS) a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
-      doc.body.appendChild(a); a.click();
+      if (isIOS) {
+        a.setAttribute("target", "_top"); // Safari intercepts .ics -> Calendar
+      } else {
+        a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
+      }
+      document.body.appendChild(a); a.click();
       setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
     } catch (e) {
       window.open(url, "_blank");
@@ -60,59 +63,27 @@
     return false;
   }
 
-  // Remember where the reader was, so returning to the invitation (after adding
-  // an event / switching tabs) lands exactly where they left off.
-  try {
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    const SK = "scrollpos_" + location.pathname;
-    const restore = () => {
-      const s = sessionStorage.getItem(SK);
-      if (s) window.scrollTo(0, parseInt(s, 10) || 0);
-    };
-    restore();
-    window.addEventListener("load", restore);
-    window.addEventListener("pageshow", restore);
-    window.addEventListener("scroll", () => {
-      try { sessionStorage.setItem(SK, String(window.scrollY || window.pageYOffset || 0)); } catch (e) {}
-    }, { passive: true });
-  } catch (e) {}
-
-  // Open a URL in a new tab via a link-click (browsers rarely block these)
-  function openViaLink(url) {
-    const a = document.createElement("a");
-    a.href = url; a.target = "_blank"; a.rel = "noopener"; a.style.display = "none";
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { try { a.remove(); } catch (e) {} }, 1200);
-  }
-
   document.querySelectorAll("[data-ics]").forEach((el) => {
     const txt = el.querySelector(".cal-txt");
     const orig = txt ? txt.textContent : "";
-    let pending = false; // true only if the Reception popup got blocked
+    let step = 0;
     el.addEventListener("click", (e) => {
-      try { sessionStorage.setItem("scrollpos_" + location.pathname, String(window.scrollY || 0)); } catch (err) {}
-      if (useGoogle) {
+      if (isAndroid) {
         e.preventDefault();
-        if (pending) {                       // finish the blocked 2nd event
-          openViaLink(GCAL_REC);
-          pending = false;
-          if (txt) txt.textContent = orig;
-          el.classList.remove("cal-step2");
-          return;
-        }
-        // One click → open BOTH events. Wedding via link-click (reliable),
-        // Reception via popup (detectable so we can fall back if blocked).
-        const w2 = window.open(GCAL_REC, "_blank");
-        openViaLink(GCAL_WED);
-        if (!w2) {
-          // Reception popup was blocked — offer it as a one-tap follow-up
-          pending = true;
+        if (step === 0) {
+          window.open(GCAL_WED, "_blank");
+          step = 1;
           if (txt) txt.textContent = RECEPTION_LABEL;
           el.classList.add("cal-step2");
+        } else {
+          window.open(GCAL_REC, "_blank");
+          step = 0;
+          if (txt) txt.textContent = orig;
+          el.classList.remove("cal-step2");
         }
         return;
       }
-      // iOS: the .ics opens Apple Calendar and adds both events at once
+      // iOS / macOS / desktop: the .ics adds both events
       if (openIcs(el) === false) e.preventDefault();
     });
   });
