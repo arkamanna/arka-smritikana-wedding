@@ -53,9 +53,14 @@
       if (isIOS) {
         a.href = url;
         a.setAttribute("target", "_top"); // Safari intercepts .ics -> Calendar
-      } else {
-        // Desktop: open the OS Calendar app via webcal:// (Subscribe -> adds both events)
+      } else if (location.protocol === "https:") {
+        // Hosted over HTTPS: subscribe via webcal:// (Calendar can fetch securely)
         a.href = url.replace(/^https?:/i, "webcal:");
+      } else {
+        // Local/insecure http: webcal fetch is refused by Calendar, so download
+        // the .ics instead (opening it adds both events).
+        a.href = url;
+        a.setAttribute("download", "Arka-Smritikana-Wedding.ics");
       }
       document.body.appendChild(a); a.click();
       setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
