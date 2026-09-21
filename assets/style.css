@@ -575,10 +575,10 @@ body.en .cal-btn{ font-family:var(--clean); font-style:italic; font-weight:700; 
   background:var(--gold-bright);
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='black' d='M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z'/%3E%3C/svg%3E") center/contain no-repeat;
           mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='black' d='M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z'/%3E%3C/svg%3E") center/contain no-repeat; }
-.cal-hint{ margin:12px 0 0; color:var(--gold); opacity:.85; font-size:.92rem; letter-spacing:.3px; }
+.cal-ico-img{ width:1.7em; height:1.7em; object-fit:contain; display:inline-block;
+  vertical-align:-.42em; filter:drop-shadow(0 2px 4px rgba(0,0,0,.28)); }
 @media (max-width:560px){
   .cal-btn{ font-size:1.02rem; padding:12px 22px; }
-  .cal-hint{ font-size:.82rem; }
 }
 
 /* ---- Shell iframe viewer (keeps music playing across language switches) ---- */
